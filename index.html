@@ -5,280 +5,126 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="健康日记">
-<title>健康日记</title>
+<meta name="apple-mobile-web-app-title" content="AI健康日记">
+<title>AI健康日记</title>
 <style>
 :root {
-  --green: #1a9e75;
-  --green-light: #e8f7f2;
-  --green-dark: #0f6e56;
-  --red: #e24b4a;
-  --red-light: #fdf0f0;
-  --amber: #ef9f27;
-  --amber-light: #fef9ee;
-  --blue: #3b82f6;
-  --blue-light: #eff6ff;
-  --purple: #8b5cf6;
-  --purple-light: #f5f3ff;
-  --g50: #f9f9f8;
-  --g100: #f1f0ec;
-  --g200: #e4e2db;
-  --g300: #ccc9c0;
-  --g400: #9c9a92;
-  --g500: #6b6964;
-  --g700: #3a3935;
-  --g900: #1a1918;
-  --radius: 18px;
-  --radius-sm: 12px;
-  --shadow: 0 1px 2px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.06);
+  --green: #1a9e75; --green-light: #e8f7f2; --green-dark: #0f6e56;
+  --red: #e24b4a; --amber: #ef9f27;
+  --g50: #f9f9f8; --g100: #f1f0ec; --g200: #e4e2db;
+  --g400: #9c9a92; --g500: #6b6964; --g700: #3a3935; --g900: #1a1918;
+  --radius: 18px; --radius-sm: 12px;
+  --shadow: 0 1px 2px rgba(0,0,0,0.06), 0 4px 12px rgba(0,0,0,0.05);
 }
-
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: -apple-system,'PingFang SC','SF Pro Text',sans-serif; background: var(--g50); color: var(--g900); min-height: 100vh; max-width: 430px; margin: 0 auto; }
 
-body {
-  font-family: -apple-system, 'PingFang SC', 'SF Pro Text', sans-serif;
-  background: var(--g50);
-  color: var(--g900);
-  min-height: 100vh;
-  max-width: 430px;
-  margin: 0 auto;
-  position: relative;
-}
-
-/* ── HEADER ── */
-.header {
-  background: #fff;
-  padding: 52px 20px 0;
-  border-bottom: 1px solid var(--g100);
-  position: sticky; top: 0; z-index: 20;
-}
-.header-row {
-  display: flex; align-items: flex-start;
-  justify-content: space-between; margin-bottom: 14px;
-}
-.header-title { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; }
+.header { background: #fff; padding: 52px 20px 0; border-bottom: 1px solid var(--g100); position: sticky; top: 0; z-index: 20; }
+.header-row { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 14px; }
+.header-title { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; line-height: 1.1; }
 .header-sub { font-size: 13px; color: var(--g400); margin-top: 3px; }
-.streak-badge {
-  display: flex; align-items: center; gap: 5px;
-  background: var(--green-light); color: var(--green-dark);
-  padding: 7px 13px; border-radius: 20px;
-  font-size: 13px; font-weight: 600; white-space: nowrap;
-}
-
-.tabs {
-  display: flex; gap: 0;
-  background: var(--g100); border-radius: 11px; padding: 3px;
-  margin-bottom: 0;
-}
-.tab {
-  flex: 1; padding: 8px 4px; border: none;
-  background: transparent; border-radius: 9px;
-  font-size: 14px; font-weight: 500; color: var(--g400);
-  cursor: pointer; transition: all 0.18s;
-}
+.streak-badge { display: flex; align-items: center; gap: 5px; background: var(--green-light); color: var(--green-dark); padding: 7px 13px; border-radius: 20px; font-size: 13px; font-weight: 600; white-space: nowrap; }
+.tabs { display: flex; background: var(--g100); border-radius: 11px; padding: 3px; }
+.tab { flex: 1; padding: 8px 4px; border: none; background: transparent; border-radius: 9px; font-size: 14px; font-weight: 500; color: var(--g400); cursor: pointer; transition: all 0.18s; }
 .tab.active { background: #fff; color: var(--g900); box-shadow: 0 1px 4px rgba(0,0,0,0.1); }
 
-/* ── CONTENT ── */
 .content { padding: 18px 16px 110px; }
-
-.sec-label {
-  font-size: 11px; font-weight: 600; letter-spacing: 0.07em;
-  text-transform: uppercase; color: var(--g400);
-  margin: 20px 0 8px 2px;
-}
+.sec-label { font-size: 11px; font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; color: var(--g400); margin: 20px 0 8px 2px; }
 .sec-label:first-child { margin-top: 0; }
 
-/* ── CARDS ── */
-.card {
-  background: #fff; border-radius: var(--radius);
-  box-shadow: var(--shadow); overflow: hidden; margin-bottom: 10px;
-}
-
-.log-item {
-  display: flex; align-items: center;
-  padding: 14px 18px; gap: 12px;
-  border-bottom: 1px solid var(--g100);
-}
+.card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 10px; }
+.log-item { display: flex; align-items: center; padding: 14px 18px; gap: 12px; border-bottom: 1px solid var(--g100); }
 .log-item:last-child { border-bottom: none; }
-
-.item-icon {
-  width: 36px; height: 36px; border-radius: 10px;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 17px; flex-shrink: 0;
-}
-.ic-head  { background: #fdf0f0; }
-.ic-back  { background: #fff8ed; }
-.ic-eye   { background: #eff6ff; }
-.ic-sleep { background: var(--green-light); }
-.ic-food  { background: #fdf4ff; }
-.ic-move  { background: #fffbeb; }
-.ic-pill  { background: #f0fdf4; }
-
+.item-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
+.ic-head { background: #fdf0f0; } .ic-back { background: #fff8ed; } .ic-eye { background: #eff6ff; }
+.ic-sleep { background: var(--green-light); } .ic-food { background: #fdf4ff; } .ic-move { background: #fffbeb; } .ic-pill { background: #f0fdf4; }
 .item-info { flex: 1; min-width: 0; }
 .item-name { font-size: 15px; font-weight: 500; }
-.item-sub  { font-size: 12px; color: var(--g400); margin-top: 1px; }
-
-/* Rating pills */
+.item-sub { font-size: 12px; color: var(--g400); margin-top: 1px; }
 .pills { display: flex; gap: 5px; flex-shrink: 0; }
-.pill {
-  padding: 6px 11px; border-radius: 20px;
-  border: 1.5px solid var(--g200); background: transparent;
-  font-size: 13px; font-weight: 500; color: var(--g500);
-  cursor: pointer; transition: all 0.14s; white-space: nowrap;
-}
+.pill { padding: 6px 11px; border-radius: 20px; border: 1.5px solid var(--g200); background: transparent; font-size: 13px; font-weight: 500; color: var(--g500); cursor: pointer; transition: all 0.14s; white-space: nowrap; }
 .pill:active { transform: scale(0.94); }
-.pill.s-bad  { background: var(--red);   border-color: var(--red);   color: #fff; }
+.pill.s-bad { background: var(--red); border-color: var(--red); color: #fff; }
 .pill.s-mild { background: var(--amber); border-color: var(--amber); color: #fff; }
 .pill.s-good { background: var(--green); border-color: var(--green); color: #fff; }
-
-/* Checkbox style for actions */
-.check-btn {
-  width: 32px; height: 32px; border-radius: 50%;
-  border: 2px solid var(--g200); background: transparent;
-  display: flex; align-items: center; justify-content: center;
-  cursor: pointer; transition: all 0.15s; flex-shrink: 0; font-size: 15px;
-}
+.check-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid var(--g200); background: transparent; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.15s; flex-shrink: 0; }
 .check-btn.checked { background: var(--green); border-color: var(--green); }
 .check-btn.checked::after { content: '✓'; color: #fff; font-size: 15px; font-weight: 600; }
-
-/* Sleep toggle */
-.toggle-track {
-  width: 48px; height: 27px; border-radius: 14px;
-  background: var(--g200); border: none; cursor: pointer;
-  position: relative; transition: background 0.22s; flex-shrink: 0;
-}
+.toggle-track { width: 48px; height: 27px; border-radius: 14px; background: var(--g200); border: none; cursor: pointer; position: relative; transition: background 0.22s; flex-shrink: 0; }
 .toggle-track.on { background: var(--green); }
-.toggle-knob {
-  width: 21px; height: 21px; border-radius: 50%; background: #fff;
-  position: absolute; top: 3px; left: 3px; transition: left 0.22s;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.22);
-}
+.toggle-knob { width: 21px; height: 21px; border-radius: 50%; background: #fff; position: absolute; top: 3px; left: 3px; transition: left 0.22s; box-shadow: 0 1px 3px rgba(0,0,0,0.22); }
 .toggle-track.on .toggle-knob { left: 24px; }
-
-/* Save button */
-.save-btn {
-  width: 100%; padding: 15px; background: var(--green); color: #fff;
-  border: none; border-radius: var(--radius); font-size: 16px;
-  font-weight: 600; cursor: pointer; transition: all 0.14s;
-  letter-spacing: 0.02em; margin-top: 6px;
-}
+.save-btn { width: 100%; padding: 15px; background: var(--green); color: #fff; border: none; border-radius: var(--radius); font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.14s; margin-top: 6px; }
 .save-btn:active { transform: scale(0.98); opacity: 0.88; }
 .save-btn.done { background: var(--green-dark); }
 .save-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-/* ── AI CARD ── */
-.ai-card {
-  background: linear-gradient(135deg, #0f6e56 0%, #1a9e75 100%);
-  border-radius: var(--radius); padding: 18px 20px;
-  margin-top: 10px; display: none;
-}
+.ai-card { background: var(--green-dark); border-radius: var(--radius); padding: 18px 20px; margin-top: 10px; display: none; }
 .ai-card.show { display: block; }
 .ai-header { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-.ai-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.6); }
-.ai-label { font-size: 12px; color: rgba(255,255,255,0.7); font-weight: 500; letter-spacing: 0.05em; text-transform: uppercase; }
-.ai-text { font-size: 15px; color: #fff; line-height: 1.65; }
+.ai-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,0.5); }
+.ai-label { font-size: 11px; color: rgba(255,255,255,0.6); font-weight: 600; letter-spacing: 0.07em; text-transform: uppercase; }
+.ai-text { font-size: 15px; color: #fff; line-height: 1.7; }
 .ai-loading { display: flex; align-items: center; gap: 8px; }
-.ai-spinner {
-  width: 16px; height: 16px; border-radius: 50%;
-  border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff;
-  animation: spin 0.8s linear infinite;
-}
+.ai-spinner { width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; animation: spin 0.8s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg); } }
-.ai-loading-text { font-size: 14px; color: rgba(255,255,255,0.8); }
+.ai-loading-text { font-size: 14px; color: rgba(255,255,255,0.75); }
 
-/* ── HISTORY ── */
-.history-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; }
-.h-row {
-  display: flex; align-items: center; padding: 12px 18px;
-  border-bottom: 1px solid var(--g100); gap: 10px;
-}
+/* symptom cards in trends */
+.sym-card-wrap { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--g100); }
+.sym-card-wrap:last-child { border-bottom: none; }
+.sym-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
+.sym-body { flex: 1; min-width: 0; }
+.sym-name { font-size: 14px; font-weight: 500; margin-bottom: 7px; }
+.heat-row { display: flex; gap: 2.5px; margin-bottom: 7px; flex-wrap: nowrap; overflow: hidden; }
+.hc { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
+.hc-none { background: var(--g100); }
+.hc-good { background: var(--green); opacity: 0.7; }
+.hc-mild { background: var(--amber); }
+.hc-bad  { background: var(--red); }
+.sym-meta { display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+.sym-stat { font-size: 12px; color: var(--g500); }
+.sym-stat b { color: var(--g900); font-weight: 500; }
+.sym-trend { font-size: 12px; font-weight: 500; }
+.trend-up   { color: var(--red); }
+.trend-down { color: var(--green); }
+.trend-flat { color: var(--g400); }
+
+.action-row { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--g100); gap: 10px; }
+.action-row:last-child { border-bottom: none; }
+.action-name { font-size: 14px; flex: 1; }
+.bar-track { width: 80px; height: 5px; border-radius: 3px; background: var(--g100); overflow: hidden; }
+.bar-fill { height: 100%; border-radius: 3px; background: var(--green); }
+.action-pct { font-size: 13px; font-weight: 500; color: var(--g700); min-width: 32px; text-align: right; }
+
+.h-row { display: flex; align-items: flex-start; padding: 11px 16px; border-bottom: 1px solid var(--g100); gap: 10px; }
 .h-row:last-child { border-bottom: none; }
-.h-date-col { min-width: 52px; }
-.h-date { font-size: 14px; font-weight: 500; }
-.h-wd   { font-size: 11px; color: var(--g400); margin-top: 1px; }
-.h-dots { display: flex; gap: 7px; flex-wrap: wrap; flex: 1; }
-.h-chip {
-  display: flex; align-items: center; gap: 3px;
-  font-size: 11px; color: var(--g500); background: var(--g50);
-  padding: 3px 7px; border-radius: 20px;
-}
-.dot { width: 7px; height: 7px; border-radius: 50%; }
-.d-good { background: var(--green); }
-.d-mild { background: var(--amber); }
-.d-bad  { background: var(--red); }
-.d-off  { background: var(--g200); }
-.d-on   { background: var(--green); }
+.h-date-col { min-width: 48px; flex-shrink: 0; }
+.h-date { font-size: 13px; font-weight: 500; }
+.h-wd { font-size: 11px; color: var(--g400); }
+.h-chips { display: flex; gap: 4px; flex-wrap: wrap; flex: 1; }
+.chip { font-size: 11px; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+.chip-bad  { background: #fdf0f0; color: #a32d2d; }
+.chip-mild { background: #fef9ee; color: #854f0b; }
+.chip-good { background: #eaf3de; color: #3b6d11; }
+.chip-on   { background: var(--green-light); color: var(--green-dark); }
+.chip-off  { background: var(--g100); color: var(--g400); }
 
-/* ── STATS ── */
-.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
-.stat-card { background: #fff; border-radius: var(--radius-sm); box-shadow: var(--shadow); padding: 14px 16px; }
-.stat-icon { font-size: 18px; margin-bottom: 6px; }
-.stat-val  { font-size: 24px; font-weight: 700; letter-spacing: -0.5px; }
-.stat-val.c-green  { color: var(--green); }
-.stat-val.c-amber  { color: var(--amber); }
-.stat-val.c-red    { color: var(--red); }
-.stat-name { font-size: 11px; color: var(--g400); margin-top: 2px; }
-
-.chart-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); padding: 18px; margin-bottom: 10px; }
-.chart-title { font-size: 14px; font-weight: 600; margin-bottom: 2px; }
-.chart-sub   { font-size: 12px; color: var(--g400); margin-bottom: 14px; }
-
-.week-dots { display: flex; gap: 5px; }
-.w-dot {
-  flex: 1; aspect-ratio: 1; border-radius: 50%;
-  border: 1.5px solid var(--g200); display: flex;
-  align-items: center; justify-content: center;
-  font-size: 10px; color: var(--g400);
-}
-.w-dot.done { background: var(--green); border-color: var(--green); color: #fff; font-size: 12px; }
-.w-dot.today { border-color: var(--green); color: var(--green); font-weight: 600; }
-
-/* ── SETTINGS ── */
 .settings-card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 10px; }
-.setting-row {
-  display: flex; align-items: center; padding: 14px 18px;
-  border-bottom: 1px solid var(--g100); gap: 12px;
-}
+.setting-row { display: flex; align-items: center; padding: 14px 18px; border-bottom: 1px solid var(--g100); gap: 12px; }
 .setting-row:last-child { border-bottom: none; }
-.setting-label { flex: 1; font-size: 15px; }
-.setting-sub   { font-size: 12px; color: var(--g400); margin-top: 1px; }
-.api-input {
-  flex: 1; padding: 8px 12px; border: 1.5px solid var(--g200);
-  border-radius: 10px; font-size: 13px; font-family: monospace;
-  color: var(--g700); background: var(--g50); outline: none;
-}
+.api-input { flex: 1; padding: 8px 12px; border: 1.5px solid var(--g200); border-radius: 10px; font-size: 13px; font-family: monospace; color: var(--g700); background: var(--g50); outline: none; min-width: 0; }
 .api-input:focus { border-color: var(--green); }
-.save-api-btn {
-  padding: 8px 16px; background: var(--green); color: #fff;
-  border: none; border-radius: 10px; font-size: 14px;
-  font-weight: 500; cursor: pointer; white-space: nowrap;
-}
+.save-api-btn { padding: 8px 16px; background: var(--green); color: #fff; border: none; border-radius: 10px; font-size: 14px; font-weight: 500; cursor: pointer; white-space: nowrap; flex-shrink: 0; }
 
-/* ── EMPTY / TOAST ── */
 .empty { text-align: center; padding: 48px 0; color: var(--g400); }
 .empty-icon { font-size: 38px; margin-bottom: 10px; }
 .empty-text { font-size: 14px; line-height: 1.6; }
-
-.toast {
-  position: fixed; bottom: 30px; left: 50%;
-  transform: translateX(-50%) translateY(16px);
-  background: var(--g900); color: #fff;
-  padding: 11px 22px; border-radius: 22px;
-  font-size: 14px; font-weight: 500;
-  opacity: 0; transition: all 0.25s;
-  pointer-events: none; z-index: 100; white-space: nowrap;
-}
+.toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(16px); background: var(--g900); color: #fff; padding: 11px 22px; border-radius: 22px; font-size: 14px; font-weight: 500; opacity: 0; transition: all 0.25s; pointer-events: none; z-index: 100; white-space: nowrap; }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-/* bar chart */
-.bars { display: flex; gap: 3px; align-items: flex-end; height: 88px; margin-bottom: 6px; }
-.bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 3px; }
-.bar-fill { width: 100%; border-radius: 4px 4px 0 0; min-height: 4px; }
-.bar-lbl  { font-size: 9px; color: var(--g400); }
-
-.legend { display: flex; gap: 14px; }
-.leg-item { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--g500); }
-.leg-dot  { width: 8px; height: 8px; border-radius: 2px; }
+.legend-row { display: flex; gap: 14px; margin-top: 4px; padding: 0 2px; }
+.leg { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--g500); }
+.leg-dot { width: 8px; height: 8px; border-radius: 2px; }
 </style>
 </head>
 <body>
@@ -286,24 +132,22 @@ body {
 <div class="header">
   <div class="header-row">
     <div>
-      <div class="header-title">健康日记</div>
+      <div class="header-title">AI 健康日记</div>
       <div class="header-sub" id="hdr-date"></div>
     </div>
     <div class="streak-badge">🔥 <span id="streak-num">0</span> 天</div>
   </div>
   <div class="tabs">
     <button class="tab active" onclick="switchTab('log')">今天</button>
-    <button class="tab" onclick="switchTab('history')">历史</button>
-    <button class="tab" onclick="switchTab('stats')">趋势</button>
+    <button class="tab" onclick="switchTab('trends')">趋势</button>
     <button class="tab" onclick="switchTab('settings')">设置</button>
   </div>
 </div>
 
 <div class="content">
 
-  <!-- ══ LOG TAB ══ -->
+  <!-- ══ TODAY ══ -->
   <div id="tab-log">
-
     <div class="sec-label">症状记录</div>
     <div class="card">
       <div class="log-item">
@@ -335,13 +179,8 @@ body {
       </div>
       <div class="log-item">
         <div class="item-icon ic-sleep">🌙</div>
-        <div class="item-info">
-          <div class="item-name">睡眠</div>
-          <div class="item-sub" id="sleep-sub">昨晚没睡整觉</div>
-        </div>
-        <button class="toggle-track" id="sleep-toggle" onclick="toggleSleep()">
-          <div class="toggle-knob"></div>
-        </button>
+        <div class="item-info"><div class="item-name">睡眠</div><div class="item-sub" id="sleep-sub">昨晚没睡整觉</div></div>
+        <button class="toggle-track" id="sleep-toggle" onclick="toggleSleep()"><div class="toggle-knob"></div></button>
       </div>
     </div>
 
@@ -350,394 +189,376 @@ body {
       <div class="log-item">
         <div class="item-icon ic-food">🥗</div>
         <div class="item-info"><div class="item-name">高蛋白 + 抗炎饮食</div><div class="item-sub">今天饮食做到了吗？</div></div>
-        <button class="check-btn" id="chk-food" onclick="toggleCheck('food', this)"></button>
+        <button class="check-btn" id="chk-food" onclick="toggleCheck('food',this)"></button>
       </div>
       <div class="log-item">
         <div class="item-icon ic-move">🏃</div>
         <div class="item-info"><div class="item-name">运动</div><div class="item-sub">今天有运动吗？</div></div>
-        <button class="check-btn" id="chk-exercise" onclick="toggleCheck('exercise', this)"></button>
+        <button class="check-btn" id="chk-exercise" onclick="toggleCheck('exercise',this)"></button>
       </div>
       <div class="log-item">
         <div class="item-icon ic-pill">💊</div>
         <div class="item-info"><div class="item-name">补剂</div><div class="item-sub">维生素D + 综合维生素</div></div>
-        <button class="check-btn" id="chk-supplement" onclick="toggleCheck('supplement', this)"></button>
+        <button class="check-btn" id="chk-supplement" onclick="toggleCheck('supplement',this)"></button>
       </div>
     </div>
 
     <button class="save-btn" id="save-btn" onclick="saveToday()">保存今天的记录</button>
 
-    <!-- AI分析 -->
     <div class="ai-card" id="ai-card">
-      <div class="ai-header">
-        <div class="ai-dot"></div>
-        <div class="ai-label">AI 健康分析</div>
-      </div>
-      <div id="ai-body">
-        <div class="ai-loading">
-          <div class="ai-spinner"></div>
-          <div class="ai-loading-text">正在分析你的健康趋势…</div>
-        </div>
-      </div>
+      <div class="ai-header"><div class="ai-dot"></div><div class="ai-label">AI 健康分析</div></div>
+      <div id="ai-body"><div class="ai-loading"><div class="ai-spinner"></div><div class="ai-loading-text">正在分析健康趋势与关联…</div></div></div>
     </div>
-
   </div>
 
-  <!-- ══ HISTORY TAB ══ -->
-  <div id="tab-history" style="display:none">
-    <div class="sec-label">过往记录</div>
-    <div id="history-content"></div>
-  </div>
-
-  <!-- ══ STATS TAB ══ -->
-  <div id="tab-stats" style="display:none">
-    <div class="sec-label">近30天概况</div>
-    <div class="stats-grid" id="stats-grid"></div>
-
-    <div class="sec-label">本周打卡</div>
-    <div class="chart-card">
-      <div class="week-dots" id="week-dots"></div>
-      <div style="font-size:12px;color:var(--g400);margin-top:10px" id="week-label"></div>
-    </div>
-
-    <div class="sec-label">近14天综合状态</div>
-    <div class="chart-card">
-      <div class="chart-title">每日健康得分</div>
-      <div class="chart-sub">满分7分（4项症状 + 3项行动）</div>
-      <div class="bars" id="trend-bars"></div>
-      <div class="legend">
-        <div class="leg-item"><div class="leg-dot" style="background:var(--green)"></div>良好</div>
-        <div class="leg-item"><div class="leg-dot" style="background:var(--amber)"></div>一般</div>
-        <div class="leg-item"><div class="leg-dot" style="background:var(--red)"></div>较差</div>
-      </div>
+  <!-- ══ TRENDS ══ -->
+  <div id="tab-trends" style="display:none">
+    <div class="sec-label">症状概览（近30天）</div>
+    <div class="card" id="sym-overview"></div>
+    <div class="legend-row">
+      <div class="leg"><div class="leg-dot" style="background:var(--green);opacity:.7"></div>无</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--amber)"></div>轻微</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--red)"></div>严重</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--g100)"></div>未记录</div>
     </div>
 
     <div class="sec-label">行动打卡率（近30天）</div>
-    <div class="stats-grid" id="action-stats"></div>
+    <div class="card" id="action-rates"></div>
+
+    <div class="sec-label">历史记录</div>
+    <div class="card" id="history-list"></div>
   </div>
 
-  <!-- ══ SETTINGS TAB ══ -->
+  <!-- ══ SETTINGS ══ -->
   <div id="tab-settings" style="display:none">
     <div class="sec-label">AI 分析设置</div>
     <div class="settings-card">
       <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:10px">
         <div>
-          <div class="setting-label" style="font-size:15px;font-weight:500">智谱AI API Key</div>
-          <div style="font-size:12px;color:var(--g400);margin-top:3px">用于保存后自动生成健康分析，Key 仅存在本机</div>
+          <div style="font-size:15px;font-weight:500">智谱AI API Key</div>
+          <div style="font-size:12px;color:var(--g400);margin-top:3px">Key 仅存储在本机，不上传任何服务器</div>
         </div>
         <div style="display:flex;gap:8px;width:100%">
           <input class="api-input" id="api-key-input" type="password" placeholder="粘贴你的 API Key" />
           <button class="save-api-btn" onclick="saveApiKey()">保存</button>
         </div>
-        <div style="font-size:12px;color:var(--g400)">
-          注册地址：<span style="color:var(--blue)">bigmodel.cn</span> → 开放平台 → API Keys → 新建
-        </div>
+        <div style="font-size:12px;color:var(--g400)">注册：bigmodel.cn → 开放平台 → API Keys</div>
       </div>
     </div>
-
-    <div class="sec-label">关于</div>
+    <div class="sec-label">数据</div>
     <div class="settings-card">
-      <div class="setting-row">
-        <div class="item-info">
-          <div class="setting-label">健康日记</div>
-          <div class="setting-sub">数据存储在本机，不上传任何服务器</div>
-        </div>
-      </div>
       <div class="setting-row" style="justify-content:space-between">
-        <div class="item-info">
-          <div class="setting-label">清除所有数据</div>
-          <div class="setting-sub">删除全部记录，不可恢复</div>
+        <div>
+          <div style="font-size:15px;font-weight:500">清除所有记录</div>
+          <div style="font-size:12px;color:var(--g400);margin-top:2px">删除全部数据，不可恢复</div>
         </div>
-        <button onclick="clearAll()" style="padding:7px 14px;border:1.5px solid var(--red);color:var(--red);background:transparent;border-radius:10px;font-size:13px;cursor:pointer">清除</button>
+        <button onclick="clearAll()" style="padding:7px 14px;border:1.5px solid var(--red);color:var(--red);background:transparent;border-radius:10px;font-size:13px;cursor:pointer;flex-shrink:0">清除</button>
       </div>
     </div>
   </div>
 
 </div>
-
 <div class="toast" id="toast"></div>
 
 <script>
-const SK = 'hj_data_v3';
-const AK = 'hj_apikey';
-let today = new Date().toISOString().slice(0,10);
-let state = { headache:null, back:null, eyes:null, sleep:false, food:false, exercise:false, supplement:false };
+const SK='hj_v4', AK='hj_apikey';
+let today=new Date().toISOString().slice(0,10);
+let state={headache:null,back:null,eyes:null,sleep:false,food:false,exercise:false,supplement:false};
 
-// ── Helpers ──
-function fmt(d) {
-  const dt = new Date(d+'T00:00:00');
-  return (dt.getMonth()+1)+'月'+dt.getDate()+'日';
-}
-function wd(d) {
-  return ['日','一','二','三','四','五','六'][new Date(d+'T00:00:00').getDay()];
-}
-function load() { try { return JSON.parse(localStorage.getItem(SK)||'{}'); } catch(e){return{};} }
-function save(data) { localStorage.setItem(SK, JSON.stringify(data)); }
-function getKey() { return localStorage.getItem(AK)||''; }
-function toast(msg) {
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2200);
-}
+function fmt(d){const dt=new Date(d+'T00:00:00');return(dt.getMonth()+1)+'月'+dt.getDate()+'日';}
+function wd(d){return['日','一','二','三','四','五','六'][new Date(d+'T00:00:00').getDay()];}
+function load(){try{return JSON.parse(localStorage.getItem(SK)||'{}');}catch(e){return{};}}
+function save(data){localStorage.setItem(SK,JSON.stringify(data));}
+function getKey(){return localStorage.getItem(AK)||'';}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 
-// ── Header ──
-const now = new Date();
-document.getElementById('hdr-date').textContent =
-  (now.getMonth()+1)+'月'+now.getDate()+'日 周'+['日','一','二','三','四','五','六'][now.getDay()];
+// header date
+const now=new Date();
+document.getElementById('hdr-date').textContent=(now.getMonth()+1)+'月'+now.getDate()+'日 周'+['日','一','二','三','四','五','六'][now.getDay()];
 
-// ── Streak ──
-function calcStreak() {
-  const all=load(); let s=0;
-  const d=new Date();
-  while(true){
-    const k=d.toISOString().slice(0,10);
-    if(!all[k]) break; s++;
-    d.setDate(d.getDate()-1);
-  }
+function calcStreak(){
+  const all=load();let s=0;const d=new Date();
+  while(true){const k=d.toISOString().slice(0,10);if(!all[k])break;s++;d.setDate(d.getDate()-1);}
   document.getElementById('streak-num').textContent=s;
 }
 
-// ── Rating ──
-function rate(btn) {
-  const key=btn.dataset.key, val=parseInt(btn.dataset.val);
+function rate(btn){
+  const key=btn.dataset.key,val=parseInt(btn.dataset.val);
   state[key]=val;
   document.querySelectorAll(`.pill[data-key="${key}"]`).forEach(b=>{
     b.className='pill';
-    if(parseInt(b.dataset.val)===val)
-      b.classList.add(val===0?'s-bad':val===1?'s-mild':'s-good');
+    if(parseInt(b.dataset.val)===val)b.classList.add(val===0?'s-bad':val===1?'s-mild':'s-good');
   });
 }
 
-function toggleSleep() {
+function toggleSleep(){
   state.sleep=!state.sleep;
-  const t=document.getElementById('sleep-toggle');
-  t.classList.toggle('on',state.sleep);
+  document.getElementById('sleep-toggle').classList.toggle('on',state.sleep);
   const sub=document.getElementById('sleep-sub');
   sub.textContent=state.sleep?'昨晚睡了整觉 ✓':'昨晚没睡整觉';
   sub.style.color=state.sleep?'var(--green)':'';
 }
 
-function toggleCheck(key, btn) {
-  state[key]=!state[key];
-  btn.classList.toggle('checked',state[key]);
-}
+function toggleCheck(key,btn){state[key]=!state[key];btn.classList.toggle('checked',state[key]);}
 
-// ── Save ──
-async function saveToday() {
-  if(state.headache===null||state.back===null||state.eyes===null){
-    toast('请先完成症状记录'); return;
-  }
-  const all=load();
-  all[today]={...state, ts:Date.now()};
-  save(all);
+async function saveToday(){
+  if(state.headache===null||state.back===null||state.eyes===null){toast('请先完成症状记录');return;}
+  const all=load();all[today]={...state,ts:Date.now()};save(all);
   const btn=document.getElementById('save-btn');
-  btn.textContent='已保存 ✓'; btn.classList.add('done'); btn.disabled=true;
-  setTimeout(()=>{ btn.textContent='保存今天的记录'; btn.classList.remove('done'); btn.disabled=false; },2500);
+  btn.textContent='已保存 ✓';btn.classList.add('done');btn.disabled=true;
+  setTimeout(()=>{btn.textContent='保存今天的记录';btn.classList.remove('done');btn.disabled=false;},2500);
   calcStreak();
   await runAI(all);
 }
 
 // ── AI ──
-async function runAI(all) {
+async function runAI(all){
   const card=document.getElementById('ai-card');
   const body=document.getElementById('ai-body');
   card.classList.add('show');
-  body.innerHTML=`<div class="ai-loading"><div class="ai-spinner"></div><div class="ai-loading-text">正在分析你的健康趋势…</div></div>`;
-
+  body.innerHTML='<div class="ai-loading"><div class="ai-spinner"></div><div class="ai-loading-text">正在分析健康趋势与关联…</div></div>';
   const apiKey=getKey();
-  if(!apiKey){
-    body.innerHTML=`<div class="ai-text">请先在「设置」页面填入 API Key，才能启用 AI 分析功能。</div>`;
-    return;
-  }
+  if(!apiKey){body.innerHTML='<div class="ai-text">请先在「设置」页面填入 API Key，才能启用 AI 分析。</div>';return;}
 
-  // Build data summary
   const keys=Object.keys(all).sort();
   const recent=keys.slice(-30).map(k=>{
     const d=all[k];
     return `${k}: 头痛${['有','轻微','无'][d.headache]||'?'} 腰痛${['有','轻微','无'][d.back]||'?'} 眼干${['有','轻微','无'][d.eyes]||'?'} 睡眠${d.sleep?'整觉':'未整觉'} 饮食${d.food?'✓':'✗'} 运动${d.exercise?'✓':'✗'} 补剂${d.supplement?'✓':'✗'}`;
   }).join('\n');
 
-  const prompt = `你是一位关心用户健康的朋友，帮用户分析她的健康记录。
-用户基本信息：44岁女性，有腰椎轻度退变（L3/4、L4/5椎间盘膨出），正在进行抗衰老管理，每天记录头痛、腰痛、眼干、睡眠质量，以及三项行动打卡（高蛋白抗炎饮食、运动、补剂）。
+  const prompt=`你是用户的健康朋友，帮她分析健康记录并找出规律。
+用户：44岁女性，腰椎轻度退变（L3/4、L4/5椎间盘膨出），做抗衰老管理。
 
-近30天记录如下：
+近30天记录：
 ${recent}
 
-请用2-3句话，像朋友说话一样，指出最有价值的一个规律或趋势，并给出一个具体可执行的建议。语气温暖自然，不要像医生报告。不要每句话都很长，要口语化。`;
+请做两件事：
+1. 找出最有意义的一个症状关联规律（比如睡眠与头痛的关系、运动与腰痛的关系、补剂与眼干的关系等），用数据支撑，比如"你头痛的那几天里，有X天前一晚没睡整觉"。
+2. 基于整体趋势给一个具体可执行的建议。
 
-  try {
-    const res = await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer ' + apiKey
-      },
-      body: JSON.stringify({
-        model: 'glm-4-flash',
-        messages: [{ role: 'user', content: prompt }],
-        max_tokens: 200,
-        temperature: 0.7
-      })
+语气像朋友，口语化，不超过4句话，不要用医生口吻。`;
+
+  try{
+    const res=await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body:JSON.stringify({model:'glm-4-flash',messages:[{role:'user',content:prompt}],max_tokens:250,temperature:0.7})
     });
-    const data = await res.json();
-    if(data.choices && data.choices[0]) {
-      body.innerHTML=`<div class="ai-text">${data.choices[0].message.content.trim()}</div>`;
-    } else {
-      throw new Error(data.error?.message||'未知错误');
-    }
-  } catch(e) {
-    body.innerHTML=`<div class="ai-text" style="opacity:0.8">分析暂时不可用（${e.message}），数据已保存，稍后重试。</div>`;
+    const data=await res.json();
+    if(data.choices&&data.choices[0]){
+      body.innerHTML='<div class="ai-text">'+data.choices[0].message.content.trim()+'</div>';
+    }else{throw new Error(data.error?.message||'未知错误');}
+  }catch(e){
+    body.innerHTML='<div class="ai-text" style="opacity:.8">分析暂时不可用（'+e.message+'），数据已保存。</div>';
   }
 }
 
-// ── API Key ──
-function saveApiKey() {
+// ── Trends ──
+function renderTrends(){
+  const all=load();
+  const keys=Object.keys(all).sort();
+
+  // Build last 30 days list
+  const last30=[];
+  for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last30.push(d.toISOString().slice(0,10));}
+
+  // Symptom overview
+  const symptoms=[
+    {key:'headache',icon:'🧠',name:'头痛',isSleep:false},
+    {key:'back',    icon:'🦴',name:'腰痛',isSleep:false},
+    {key:'eyes',    icon:'👁️',name:'眼睛干涩',isSleep:false},
+    {key:'sleep',   icon:'🌙',name:'睡眠',isSleep:true},
+  ];
+
+  let symHtml='';
+  symptoms.forEach(s=>{
+    // heat map cells
+    let cells='';
+    last30.forEach(k=>{
+      const d=all[k];
+      if(!d){cells+='<div class="hc hc-none"></div>';return;}
+      if(s.isSleep){
+        cells+=d.sleep?'<div class="hc hc-good"></div>':'<div class="hc hc-bad"></div>';
+      }else{
+        const v=d[s.key];
+        cells+=v===2?'<div class="hc hc-good"></div>':v===1?'<div class="hc hc-mild"></div>':'<div class="hc hc-bad"></div>';
+      }
+    });
+
+    const recorded=last30.filter(k=>!!all[k]);
+    let statHtml='',trendHtml='';
+
+    if(s.isSleep){
+      const goodCount=recorded.filter(k=>all[k].sleep).length;
+      const pct=recorded.length?Math.round(goodCount/recorded.length*100):0;
+      const last7=last30.slice(-7).filter(k=>all[k]);
+      const last7good=last7.filter(k=>all[k].sleep).length;
+      statHtml=`<div class="sym-stat">整觉率 <b>${pct}%</b></div><div class="sym-stat">近7天 <b>${last7good}/${last7.length}天</b></div>`;
+      const prev7=last30.slice(-14,-7).filter(k=>all[k]);
+      const prev7good=prev7.filter(k=>all[k].sleep).length;
+      const prev7pct=prev7.length?prev7good/prev7.length:0;
+      const curr7pct=last7.length?last7good/last7.length:0;
+      if(curr7pct>prev7pct+0.1)trendHtml='<div class="sym-trend trend-down">↑ 近一周睡眠改善</div>';
+      else if(curr7pct<prev7pct-0.1)trendHtml='<div class="sym-trend trend-up">↓ 近一周睡眠变差</div>';
+      else trendHtml='<div class="sym-trend trend-flat">→ 睡眠状态平稳</div>';
+    }else{
+      const badCount=recorded.filter(k=>all[k][s.key]===0).length;
+      const mildCount=recorded.filter(k=>all[k][s.key]===1).length;
+      const last7=last30.slice(-7).filter(k=>all[k]);
+      const last7bad=last7.filter(k=>all[k][s.key]<=1).length;
+      statHtml=`<div class="sym-stat">严重 <b>${badCount}次</b></div><div class="sym-stat">轻微 <b>${mildCount}次</b></div><div class="sym-stat">近7天 <b>${last7bad}次</b></div>`;
+      const prev7=last30.slice(-14,-7).filter(k=>all[k]);
+      const prev7bad=prev7.filter(k=>all[k][s.key]<=1).length;
+      const prevRate=prev7.length?prev7bad/prev7.length:0;
+      const currRate=last7.length?last7bad/last7.length:0;
+      if(currRate>prevRate+0.15)trendHtml=`<div class="sym-trend trend-up">↑ 近两周频率上升</div>`;
+      else if(currRate<prevRate-0.15)trendHtml=`<div class="sym-trend trend-down">↓ 近两周明显好转</div>`;
+      else if(badCount===0&&mildCount===0)trendHtml=`<div class="sym-trend trend-flat">✓ 暂无记录到症状</div>`;
+      else trendHtml=`<div class="sym-trend trend-flat">→ 近期频率平稳</div>`;
+    }
+
+    symHtml+=`<div class="sym-card-wrap">
+      <div class="sym-icon">${s.icon}</div>
+      <div class="sym-body">
+        <div class="sym-name">${s.name}</div>
+        <div class="heat-row">${cells}</div>
+        <div class="sym-meta">${statHtml}</div>
+        ${trendHtml}
+      </div>
+    </div>`;
+  });
+  document.getElementById('sym-overview').innerHTML=symHtml||'<div style="padding:24px;text-align:center;color:var(--g400);font-size:14px">暂无数据</div>';
+
+  // Action rates
+  if(!keys.length){
+    document.getElementById('action-rates').innerHTML='<div style="padding:24px;text-align:center;color:var(--g400);font-size:14px">暂无数据</div>';
+  }else{
+    const r30=last30.filter(k=>!!all[k]).map(k=>all[k]);
+    const pct=fn=>r30.length?Math.round(r30.filter(fn).length/r30.length*100):0;
+    const fp=pct(d=>d.food),ep=pct(d=>d.exercise),sp=pct(d=>d.supplement);
+    const aRows=[['🥗','高蛋白饮食',fp],['🏃','运动',ep],['💊','补剂',sp]];
+    let aHtml='';
+    aRows.forEach(([icon,name,p])=>{
+      aHtml+=`<div class="action-row">
+        <span style="font-size:17px;flex-shrink:0">${icon}</span>
+        <span class="action-name">${name}</span>
+        <div class="bar-track"><div class="bar-fill" style="width:${p}%"></div></div>
+        <span class="action-pct">${p}%</span>
+      </div>`;
+    });
+    document.getElementById('action-rates').innerHTML=aHtml;
+  }
+
+  // History
+  const hkeys=keys.slice().reverse();
+  if(!hkeys.length){
+    document.getElementById('history-list').innerHTML='<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">还没有记录<br>从今天开始吧</div></div>';
+    return;
+  }
+  const chipSym=(v,good,mild,bad)=>v===0?`<span class="chip chip-bad">${bad}</span>`:v===1?`<span class="chip chip-mild">${mild}</span>`:`<span class="chip chip-good">${good}</span>`;
+  let hHtml='';
+  hkeys.slice(0,60).forEach(k=>{
+    const d=all[k];
+    hHtml+=`<div class="h-row">
+      <div class="h-date-col"><div class="h-date">${fmt(k)}</div><div class="h-wd">周${wd(k)}</div></div>
+      <div class="h-chips">
+        ${chipSym(d.headache,'头痛无','头痛轻','头痛有')}
+        ${chipSym(d.back,'腰痛无','腰痛轻','腰痛有')}
+        ${chipSym(d.eyes,'眼干无','眼干轻','眼干有')}
+        ${d.sleep?'<span class="chip chip-on">整觉</span>':'<span class="chip chip-off">未整觉</span>'}
+        ${d.food?'<span class="chip chip-on">饮食✓</span>':''}
+        ${d.exercise?'<span class="chip chip-on">运动✓</span>':''}
+        ${d.supplement?'<span class="chip chip-on">补剂✓</span>':''}
+      </div>
+    </div>`;
+  });
+  document.getElementById('history-list').innerHTML=hHtml;
+}
+
+// ── Tab switch ──
+function switchTab(name){
+  const currentDay=new Date().toISOString().slice(0,10);
+  if(name==='log'&&currentDay!==today){window.location.reload();return;}
+  ['log','trends','settings'].forEach((t,i)=>{
+    document.getElementById('tab-'+t).style.display=t===name?'':'none';
+    document.querySelectorAll('.tab')[i].classList.toggle('active',t===name);
+  });
+  if(name==='trends')renderTrends();
+  if(name==='settings'){const k=getKey();if(k)document.getElementById('api-key-input').placeholder='已设置（重新粘贴可更新）';}
+}
+
+function saveApiKey(){
   const val=document.getElementById('api-key-input').value.trim();
-  if(!val){ toast('Key 不能为空'); return; }
-  localStorage.setItem(AK, val);
+  if(!val){toast('Key 不能为空');return;}
+  localStorage.setItem(AK,val);
   document.getElementById('api-key-input').value='';
   toast('API Key 已保存');
 }
 
-// ── Clear ──
-function clearAll() {
-  if(!confirm('确定要清除所有健康记录吗？此操作不可恢复。')) return;
-  localStorage.removeItem(SK);
-  toast('已清除所有数据');
-  calcStreak();
+function clearAll(){
+  if(!confirm('确定要清除所有健康记录吗？此操作不可恢复。'))return;
+  localStorage.removeItem(SK);toast('已清除所有数据');calcStreak();
 }
 
-// ── History ──
-function renderHistory() {
+function init(){
   const all=load();
-  const keys=Object.keys(all).sort().reverse();
-  const el=document.getElementById('history-content');
-  if(!keys.length){
-    el.innerHTML='<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">还没有记录<br>从今天开始吧</div></div>';
-    return;
-  }
-  const dc=v=>v===0?'d-bad':v===1?'d-mild':'d-good';
-  let html='<div class="history-card">';
-  keys.slice(0,60).forEach(k=>{
-    const d=all[k];
-    html+=`<div class="h-row">
-      <div class="h-date-col"><div class="h-date">${fmt(k)}</div><div class="h-wd">周${wd(k)}</div></div>
-      <div class="h-dots">
-        <div class="h-chip"><div class="dot ${dc(d.headache)}"></div>头痛</div>
-        <div class="h-chip"><div class="dot ${dc(d.back)}"></div>腰痛</div>
-        <div class="h-chip"><div class="dot ${dc(d.eyes)}"></div>眼睛</div>
-        <div class="h-chip"><div class="dot ${d.sleep?'d-on':'d-off'}"></div>整觉</div>
-        <div class="h-chip"><div class="dot ${d.food?'d-on':'d-off'}"></div>饮食</div>
-        <div class="h-chip"><div class="dot ${d.exercise?'d-on':'d-off'}"></div>运动</div>
-        <div class="h-chip"><div class="dot ${d.supplement?'d-on':'d-off'}"></div>补剂</div>
-      </div>
-    </div>`;
-  });
-  html+='</div>';
-  el.innerHTML=html;
-}
-
-// ── Stats ──
-function renderStats() {
-  const all=load();
-  const keys=Object.keys(all).sort();
-  calcStreak();
-
-  // Week
-  const last7=[];
-  for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); last7.push(d.toISOString().slice(0,10)); }
-  let wHtml='<div class="week-dots">', wCount=0;
-  last7.forEach(k=>{
-    const done=!!all[k], isToday=k===today;
-    if(done) wCount++;
-    if(done) wHtml+=`<div class="w-dot done">✓</div>`;
-    else if(isToday) wHtml+=`<div class="w-dot today">${wd(k)}</div>`;
-    else wHtml+=`<div class="w-dot">${wd(k)}</div>`;
-  });
-  wHtml+='</div>';
-  document.getElementById('week-dots').innerHTML=wHtml;
-  document.getElementById('week-label').textContent=`本周已记录 ${wCount} / 7 天`;
-
-  if(!keys.length){
-    document.getElementById('stats-grid').innerHTML='<div style="grid-column:span 2;text-align:center;color:var(--g400);padding:24px;font-size:14px">暂无数据</div>';
-    document.getElementById('trend-bars').innerHTML='';
-    document.getElementById('action-stats').innerHTML='';
-    return;
-  }
-
-  const r30=keys.slice(-30).map(k=>all[k]);
-  const pct=fn=>Math.round(r30.filter(fn).length/r30.length*100);
-  const hb=pct(d=>d.headache===0), bb=pct(d=>d.back===0);
-  const sg=pct(d=>d.sleep), eb=pct(d=>d.eyes===0);
-
-  const col=(v,inv)=>inv?(v>30?'c-red':v>10?'c-amber':'c-green'):(v>70?'c-green':v>40?'c-amber':'c-red');
-  document.getElementById('stats-grid').innerHTML=`
-    <div class="stat-card"><div class="stat-icon">🧠</div><div class="stat-val ${col(hb,true)}">${hb}%</div><div class="stat-name">头痛出现率</div></div>
-    <div class="stat-card"><div class="stat-icon">🦴</div><div class="stat-val ${col(bb,true)}">${bb}%</div><div class="stat-name">腰痛出现率</div></div>
-    <div class="stat-card"><div class="stat-icon">🌙</div><div class="stat-val ${col(sg,false)}">${sg}%</div><div class="stat-name">整觉率</div></div>
-    <div class="stat-card"><div class="stat-icon">👁️</div><div class="stat-val ${col(eb,true)}">${eb}%</div><div class="stat-name">眼干出现率</div></div>
-  `;
-
-  // Action stats
-  const fp=pct(d=>d.food), ep=pct(d=>d.exercise), sp=pct(d=>d.supplement);
-  document.getElementById('action-stats').innerHTML=`
-    <div class="stat-card"><div class="stat-icon">🥗</div><div class="stat-val ${col(fp,false)}">${fp}%</div><div class="stat-name">饮食打卡率</div></div>
-    <div class="stat-card"><div class="stat-icon">🏃</div><div class="stat-val ${col(ep,false)}">${ep}%</div><div class="stat-name">运动打卡率</div></div>
-    <div class="stat-card"><div class="stat-icon">💊</div><div class="stat-val ${col(sp,false)}">${sp}%</div><div class="stat-name">补剂打卡率</div></div>
-  `;
-
-  // Bar chart
-  const last14=[];
-  for(let i=13;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); last14.push(d.toISOString().slice(0,10)); }
-  let bHtml='';
-  last14.forEach(k=>{
-    const d=all[k], isT=k===today;
-    if(!d){ bHtml+=`<div class="bar-col"><div class="bar-fill" style="height:4px;background:var(--g100)"></div><div class="bar-lbl">${wd(k)}</div></div>`; return; }
-    // score: symptom good=1pt each (headache/back/eyes/sleep), action=1pt each
-    const score=(d.headache===2?1:0)+(d.back===2?1:0)+(d.eyes===2?1:0)+(d.sleep?1:0)+(d.food?1:0)+(d.exercise?1:0)+(d.supplement?1:0);
-    const h=Math.round((score/7)*80)+4;
-    const c=score>=5?'var(--green)':score>=3?'var(--amber)':'var(--red)';
-    bHtml+=`<div class="bar-col"><div class="bar-fill" style="height:${h}px;background:${c};opacity:${isT?1:0.75}"></div><div class="bar-lbl" style="font-weight:${isT?600:400};color:${isT?'var(--g700)':'var(--g400)'}">${wd(k)}</div></div>`;
-  });
-  document.getElementById('trend-bars').innerHTML=bHtml;
-}
-
-// ── Tab switch ──
-function switchTab(name) {
-  // If day has changed since page load, reload the page to pick up new date
-  const currentDay = new Date().toISOString().slice(0,10);
-  if(name==='log' && currentDay !== today) {
-    window.location.reload();
-    return;
-  }
-  ['log','history','stats','settings'].forEach((t,i)=>{
-    document.getElementById('tab-'+t).style.display=t===name?'':'none';
-    document.querySelectorAll('.tab')[i].classList.toggle('active',t===name);
-  });
-  if(name==='history') renderHistory();
-  if(name==='stats') renderStats();
-  if(name==='settings') {
-    const k=getKey();
-    if(k) document.getElementById('api-key-input').placeholder='已设置（重新粘贴可更新）';
-  }
-}
-
-// ── Init ──
-function init() {
-  const all=load();
-  if(all[today]) {
-    const d=all[today]; state={...d};
+  if(all[today]){
+    const d=all[today];state={...d};
     ['headache','back','eyes'].forEach(key=>{
       if(d[key]!==null){
         const b=document.querySelector(`.pill[data-key="${key}"][data-val="${d[key]}"]`);
-        if(b) b.classList.add(d[key]===0?'s-bad':d[key]===1?'s-mild':'s-good');
+        if(b)b.classList.add(d[key]===0?'s-bad':d[key]===1?'s-mild':'s-good');
       }
     });
-    if(d.sleep){ document.getElementById('sleep-toggle').classList.add('on'); document.getElementById('sleep-sub').textContent='昨晚睡了整觉 ✓'; document.getElementById('sleep-sub').style.color='var(--green)'; }
-    ['food','exercise','supplement'].forEach(k=>{
-      if(d[k]) document.getElementById('chk-'+k).classList.add('checked');
-    });
+    if(d.sleep){document.getElementById('sleep-toggle').classList.add('on');document.getElementById('sleep-sub').textContent='昨晚睡了整觉 ✓';document.getElementById('sleep-sub').style.color='var(--green)';}
+    ['food','exercise','supplement'].forEach(k=>{if(d[k])document.getElementById('chk-'+k).classList.add('checked');});
+    // show cached AI result if saved today
+    if(d.aiText){const card=document.getElementById('ai-card');card.classList.add('show');document.getElementById('ai-body').innerHTML='<div class="ai-text">'+d.aiText+'</div>';}
   }
   calcStreak();
+}
+
+// override saveToday to also cache AI text
+const _origRunAI=runAI;
+async function runAI(all){
+  const card=document.getElementById('ai-card');
+  const body=document.getElementById('ai-body');
+  card.classList.add('show');
+  body.innerHTML='<div class="ai-loading"><div class="ai-spinner"></div><div class="ai-loading-text">正在分析健康趋势与关联…</div></div>';
+  const apiKey=getKey();
+  if(!apiKey){body.innerHTML='<div class="ai-text">请先在「设置」页面填入 API Key，才能启用 AI 分析。</div>';return;}
+  const keys=Object.keys(all).sort();
+  const recent=keys.slice(-30).map(k=>{
+    const d=all[k];
+    return `${k}: 头痛${['有','轻微','无'][d.headache]||'?'} 腰痛${['有','轻微','无'][d.back]||'?'} 眼干${['有','轻微','无'][d.eyes]||'?'} 睡眠${d.sleep?'整觉':'未整觉'} 饮食${d.food?'✓':'✗'} 运动${d.exercise?'✓':'✗'} 补剂${d.supplement?'✓':'✗'}`;
+  }).join('\n');
+  const prompt=`你是用户的健康朋友，帮她分析健康记录并找出规律。
+用户：44岁女性，腰椎轻度退变（L3/4、L4/5椎间盘膨出），做抗衰老管理。
+
+近30天记录：
+${recent}
+
+请做两件事：
+1. 找出最有意义的一个症状关联规律（比如睡眠与头痛的关系、运动与腰痛的关系、补剂与眼干的关系等），用数据支撑，比如"你头痛的那几天里，有X天前一晚没睡整觉"。
+2. 基于整体趋势给一个具体可执行的建议。
+
+语气像朋友，口语化，不超过4句话，不要用医生口吻。`;
+  try{
+    const res=await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body:JSON.stringify({model:'glm-4-flash',messages:[{role:'user',content:prompt}],max_tokens:250,temperature:0.7})
+    });
+    const data=await res.json();
+    if(data.choices&&data.choices[0]){
+      const txt=data.choices[0].message.content.trim();
+      body.innerHTML='<div class="ai-text">'+txt+'</div>';
+      // cache in today's record
+      const stored=load();if(stored[today]){stored[today].aiText=txt;save(stored);}
+    }else{throw new Error(data.error?.message||'未知错误');}
+  }catch(e){
+    body.innerHTML='<div class="ai-text" style="opacity:.8">分析暂时不可用（'+e.message+'），数据已保存。</div>';
+  }
 }
 
 init();
