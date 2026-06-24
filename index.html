@@ -703,6 +703,12 @@ function renderStats() {
 
 // ── Tab switch ──
 function switchTab(name) {
+  // If day has changed since page load, reload the page to pick up new date
+  const currentDay = new Date().toISOString().slice(0,10);
+  if(name==='log' && currentDay !== today) {
+    window.location.reload();
+    return;
+  }
   ['log','history','stats','settings'].forEach((t,i)=>{
     document.getElementById('tab-'+t).style.display=t===name?'':'none';
     document.querySelectorAll('.tab')[i].classList.toggle('active',t===name);
