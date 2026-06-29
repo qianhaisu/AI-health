@@ -33,6 +33,12 @@ body { font-family: -apple-system,'PingFang SC','SF Pro Text',sans-serif; backgr
 .sec-label:first-child { margin-top: 0; }
 
 .card { background: #fff; border-radius: var(--radius); box-shadow: var(--shadow); overflow: hidden; margin-bottom: 10px; }
+.date-card { display: flex; align-items: center; gap: 10px; padding: 12px 14px; margin-bottom: 14px; }
+.date-main { flex: 1; min-width: 0; }
+.date-title { font-size: 16px; font-weight: 600; }
+.date-note { font-size: 12px; color: var(--g400); margin-top: 2px; }
+.date-input-main { width: 100%; margin-top: 6px; padding: 9px 11px; border: 1.5px solid var(--g200); border-radius: 12px; background: var(--g50); color: var(--g700); font-size: 14px; outline: none; }
+.date-today { border: none; background: var(--green-light); color: var(--green-dark); border-radius: 16px; padding: 7px 10px; font-size: 12px; font-weight: 600; cursor: pointer; flex-shrink: 0; }
 .log-item { display: flex; align-items: center; padding: 14px 18px; gap: 12px; border-bottom: 1px solid var(--g100); }
 .log-item:last-child { border-bottom: none; }
 .item-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 17px; flex-shrink: 0; }
@@ -76,7 +82,8 @@ body { font-family: -apple-system,'PingFang SC','SF Pro Text',sans-serif; backgr
 .sym-icon { font-size: 20px; flex-shrink: 0; margin-top: 2px; }
 .sym-body { flex: 1; min-width: 0; }
 .sym-name { font-size: 14px; font-weight: 500; margin-bottom: 7px; }
-.heat-row { display: flex; gap: 2.5px; margin-bottom: 7px; flex-wrap: nowrap; overflow: hidden; }
+.heat-row { display: flex; flex-direction: row-reverse; gap: 2.5px; margin-bottom: 6px; flex-wrap: nowrap; overflow: hidden; }
+.heat-hint { font-size: 10px; color: var(--g400); margin-bottom: 7px; }
 .hc { width: 8px; height: 8px; border-radius: 2px; flex-shrink: 0; }
 .hc-none { background: var(--g100); }
 .hc-good { background: var(--green); opacity: 0.7; }
@@ -125,6 +132,23 @@ body { font-family: -apple-system,'PingFang SC','SF Pro Text',sans-serif; backgr
 .legend-row { display: flex; gap: 14px; margin-top: 4px; padding: 0 2px; }
 .leg { display: flex; align-items: center; gap: 4px; font-size: 11px; color: var(--g500); }
 .leg-dot { width: 8px; height: 8px; border-radius: 2px; }
+.insight-card { padding: 16px 18px; }
+.insight-title { font-size: 17px; font-weight: 700; margin-bottom: 6px; }
+.insight-text { font-size: 14px; color: var(--g700); line-height: 1.65; }
+.insight-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-top: 14px; }
+.insight-cell { background: var(--g50); border: 1px solid var(--g100); border-radius: 12px; padding: 10px 8px; text-align: center; min-width: 0; }
+.insight-num { font-size: 20px; line-height: 1; font-weight: 700; color: var(--green-dark); }
+.insight-label { font-size: 11px; color: var(--g400); margin-top: 6px; white-space: nowrap; }
+.ai-trend-btn { width: 100%; margin-top: 14px; padding: 12px; border: none; border-radius: 14px; background: var(--green); color: #fff; font-size: 14px; font-weight: 600; cursor: pointer; }
+.ai-trend-btn:disabled { opacity: .55; cursor: not-allowed; }
+.mini-note { margin-top: 8px; font-size: 12px; color: var(--g400); line-height: 1.5; }
+.history-tools { padding: 12px 14px; border-bottom: 1px solid var(--g100); display: flex; gap: 8px; }
+.date-input { flex: 1; min-width: 0; padding: 9px 11px; border: 1.5px solid var(--g200); border-radius: 11px; background: var(--g50); color: var(--g700); font-size: 13px; outline: none; }
+.small-btn { padding: 8px 12px; border: none; border-radius: 11px; background: var(--green-light); color: var(--green-dark); font-size: 13px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+.h-status { font-size: 13px; color: var(--g500); flex: 1; }
+.h-edit { border: none; background: transparent; color: var(--green-dark); font-size: 13px; font-weight: 600; cursor: pointer; }
+.data-textarea { width: 100%; min-height: 130px; resize: vertical; padding: 10px 12px; border: 1.5px solid var(--g200); border-radius: 12px; background: var(--g50); color: var(--g700); font-size: 12px; line-height: 1.45; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; outline: none; }
+.data-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; }
 </style>
 </head>
 <body>
@@ -148,13 +172,22 @@ body { font-family: -apple-system,'PingFang SC','SF Pro Text',sans-serif; backgr
 
   <!-- ══ TODAY ══ -->
   <div id="tab-log">
+    <div class="card date-card">
+      <div class="date-main">
+        <div class="date-title" id="selected-date-title"></div>
+        <div class="date-note" id="selected-date-note"></div>
+        <input class="date-input-main" id="selected-date-input" type="date" onchange="chooseDay(this.value)" />
+      </div>
+      <button class="date-today" onclick="goToday()">今天</button>
+    </div>
+
     <div class="sec-label">症状记录</div>
     <div class="card">
       <div class="log-item">
         <div class="item-icon ic-head">🧠</div>
         <div class="item-info"><div class="item-name">头痛</div><div class="item-sub">今天头部有不适吗？</div></div>
         <div class="pills">
-          <button class="pill" data-key="headache" data-val="0" onclick="rate(this)">有</button>
+          <button class="pill" data-key="headache" data-val="0" onclick="rate(this)">明显</button>
           <button class="pill" data-key="headache" data-val="1" onclick="rate(this)">轻微</button>
           <button class="pill" data-key="headache" data-val="2" onclick="rate(this)">没有</button>
         </div>
@@ -163,7 +196,7 @@ body { font-family: -apple-system,'PingFang SC','SF Pro Text',sans-serif; backgr
         <div class="item-icon ic-back">🦴</div>
         <div class="item-info"><div class="item-name">腰痛</div><div class="item-sub">腰背部有不适吗？</div></div>
         <div class="pills">
-          <button class="pill" data-key="back" data-val="0" onclick="rate(this)">有</button>
+          <button class="pill" data-key="back" data-val="0" onclick="rate(this)">明显</button>
           <button class="pill" data-key="back" data-val="1" onclick="rate(this)">轻微</button>
           <button class="pill" data-key="back" data-val="2" onclick="rate(this)">没有</button>
         </div>
@@ -172,19 +205,23 @@ body { font-family: -apple-system,'PingFang SC','SF Pro Text',sans-serif; backgr
         <div class="item-icon ic-eye">👁️</div>
         <div class="item-info"><div class="item-name">眼睛干涩</div><div class="item-sub">眼部有不舒服吗？</div></div>
         <div class="pills">
-          <button class="pill" data-key="eyes" data-val="0" onclick="rate(this)">有</button>
+          <button class="pill" data-key="eyes" data-val="0" onclick="rate(this)">明显</button>
           <button class="pill" data-key="eyes" data-val="1" onclick="rate(this)">轻微</button>
           <button class="pill" data-key="eyes" data-val="2" onclick="rate(this)">没有</button>
         </div>
       </div>
       <div class="log-item">
         <div class="item-icon ic-sleep">🌙</div>
-        <div class="item-info"><div class="item-name">睡眠</div><div class="item-sub" id="sleep-sub">昨晚没睡整觉</div></div>
-        <button class="toggle-track" id="sleep-toggle" onclick="toggleSleep()"><div class="toggle-knob"></div></button>
+        <div class="item-info"><div class="item-name">睡眠质量</div><div class="item-sub">昨晚睡得怎么样？</div></div>
+        <div class="pills">
+          <button class="pill" data-key="sleep" data-val="0" onclick="rate(this)">差</button>
+          <button class="pill" data-key="sleep" data-val="1" onclick="rate(this)">一般</button>
+          <button class="pill" data-key="sleep" data-val="2" onclick="rate(this)">好</button>
+        </div>
       </div>
     </div>
 
-    <div class="sec-label">今日行动</div>
+    <div class="sec-label" id="action-label">今日行动</div>
     <div class="card">
       <div class="log-item">
         <div class="item-icon ic-food">🥗</div>
@@ -203,7 +240,7 @@ body { font-family: -apple-system,'PingFang SC','SF Pro Text',sans-serif; backgr
       </div>
     </div>
 
-    <button class="save-btn" id="save-btn" onclick="saveToday()">保存今天的记录</button>
+    <button class="save-btn" id="save-btn" onclick="saveEntry()">保存记录</button>
 
     <div class="ai-card" id="ai-card">
       <div class="ai-header"><div class="ai-dot"></div><div class="ai-label">AI 健康分析</div></div>
@@ -213,6 +250,11 @@ body { font-family: -apple-system,'PingFang SC','SF Pro Text',sans-serif; backgr
 
   <!-- ══ TRENDS ══ -->
   <div id="tab-trends" style="display:none">
+    <div class="sec-label">近期表现</div>
+    <div class="card">
+      <div class="insight-card" id="performance-card"></div>
+    </div>
+
     <div class="sec-label">症状概览（近30天）</div>
     <div class="card" id="sym-overview"></div>
     <div class="legend-row">
@@ -222,10 +264,7 @@ body { font-family: -apple-system,'PingFang SC','SF Pro Text',sans-serif; backgr
       <div class="leg"><div class="leg-dot" style="background:var(--g100)"></div>未记录</div>
     </div>
 
-    <div class="sec-label">行动打卡率（近30天）</div>
-    <div class="card" id="action-rates"></div>
-
-    <div class="sec-label">历史记录</div>
+    <div class="sec-label">近7天与日期搜索</div>
     <div class="card" id="history-list"></div>
   </div>
 
@@ -247,6 +286,17 @@ body { font-family: -apple-system,'PingFang SC','SF Pro Text',sans-serif; backgr
     </div>
     <div class="sec-label">数据</div>
     <div class="settings-card">
+      <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:10px">
+        <div>
+          <div style="font-size:15px;font-weight:500">复制 / 粘贴迁移数据</div>
+          <div style="font-size:12px;color:var(--g400);margin-top:2px">换设备时，先导出复制，到新设备粘贴导入</div>
+        </div>
+        <textarea class="data-textarea" id="data-transfer" placeholder="导出的数据会出现在这里；也可以把另一台设备复制的数据粘贴到这里"></textarea>
+        <div class="data-actions">
+          <button class="small-btn" onclick="exportData()">导出并复制</button>
+          <button class="small-btn" onclick="importData()">粘贴导入</button>
+        </div>
+      </div>
       <div class="setting-row" style="justify-content:space-between">
         <div>
           <div style="font-size:15px;font-weight:500">清除所有记录</div>
@@ -262,24 +312,99 @@ body { font-family: -apple-system,'PingFang SC','SF Pro Text',sans-serif; backgr
 
 <script>
 const SK='hj_v4', AK='hj_apikey';
-let today=new Date().toISOString().slice(0,10);
-let state={headache:null,back:null,eyes:null,sleep:false,food:false,exercise:false,supplement:false};
+const emptyState=()=>({headache:null,back:null,eyes:null,sleep:null,food:false,exercise:false,supplement:false});
+let today=localDateKey(new Date());
+let selectedDay=today;
+let state=emptyState();
 
-function fmt(d){const dt=new Date(d+'T00:00:00');return(dt.getMonth()+1)+'月'+dt.getDate()+'日';}
-function wd(d){return['日','一','二','三','四','五','六'][new Date(d+'T00:00:00').getDay()];}
+function localDateKey(date){
+  const d=new Date(date);
+  d.setMinutes(d.getMinutes()-d.getTimezoneOffset());
+  return d.toISOString().slice(0,10);
+}
+function dateFromKey(d){return new Date(d+'T00:00:00');}
+function addDays(d,days){const dt=dateFromKey(d);dt.setDate(dt.getDate()+days);return localDateKey(dt);}
+function daysBetween(a,b){return Math.round((dateFromKey(a)-dateFromKey(b))/86400000);}
+function fmt(d){const dt=dateFromKey(d);return(dt.getMonth()+1)+'月'+dt.getDate()+'日';}
+function wd(d){return['日','一','二','三','四','五','六'][dateFromKey(d).getDay()];}
 function load(){try{return JSON.parse(localStorage.getItem(SK)||'{}');}catch(e){return{};}}
 function save(data){localStorage.setItem(SK,JSON.stringify(data));}
 function getKey(){return localStorage.getItem(AK)||'';}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
-
-// header date
-const now=new Date();
-document.getElementById('hdr-date').textContent=(now.getMonth()+1)+'月'+now.getDate()+'日 周'+['日','一','二','三','四','五','六'][now.getDay()];
+function sleepVal(d){
+  if(!d)return null;
+  if(typeof d.sleep==='number')return d.sleep;
+  if(typeof d.sleep==='boolean')return d.sleep?2:0;
+  return null;
+}
+function sleepText(d){return ['差','一般','好'][sleepVal(d)]||'未记录';}
+function symptomText(v){return ['明显','轻微','没有'][v]||'未记录';}
+function normalizeEntry(d){
+  const entry={...emptyState(),...d};
+  entry.sleep=sleepVal(entry);
+  return entry;
+}
 
 function calcStreak(){
-  const all=load();let s=0;const d=new Date();
-  while(true){const k=d.toISOString().slice(0,10);if(!all[k])break;s++;d.setDate(d.getDate()-1);}
+  const all=load();let s=0;let k=today;
+  while(all[k]){s++;k=addDays(k,-1);}
   document.getElementById('streak-num').textContent=s;
+}
+
+function refreshHeader(){
+  document.getElementById('hdr-date').textContent=fmt(today)+' 周'+wd(today);
+}
+
+function resetForm(){
+  document.querySelectorAll('.pill').forEach(b=>b.className='pill');
+  document.querySelectorAll('.check-btn').forEach(b=>b.classList.remove('checked'));
+  const card=document.getElementById('ai-card');
+  card.classList.remove('show');
+  document.getElementById('ai-body').innerHTML='<div class="ai-loading"><div class="ai-spinner"></div><div class="ai-loading-text">正在分析健康趋势与关联…</div></div>';
+  const btn=document.getElementById('save-btn');
+  btn.classList.remove('done');
+  btn.disabled=false;
+}
+
+function renderSelectedDay(){
+  const all=load();
+  const d=all[selectedDay];
+  const diff=daysBetween(selectedDay,today);
+  document.getElementById('selected-date-title').textContent=fmt(selectedDay)+' 周'+wd(selectedDay);
+  document.getElementById('selected-date-note').textContent=diff===0?'今天':diff===-1?'昨天':diff===1?'明天':(diff<0?`${Math.abs(diff)}天前`:`${diff}天后`);
+  const dateInput=document.getElementById('selected-date-input');
+  dateInput.value=selectedDay;
+  dateInput.max=today;
+  document.getElementById('action-label').textContent=diff===0?'今日行动':'行动打卡';
+  document.getElementById('save-btn').textContent=diff===0?'保存今天的记录':'保存这天的记录';
+
+  resetForm();
+  state=d?normalizeEntry(d):emptyState();
+  ['headache','back','eyes','sleep'].forEach(key=>{
+    if(state[key]!==null&&state[key]!==undefined){
+      const b=document.querySelector(`.pill[data-key="${key}"][data-val="${state[key]}"]`);
+      if(b)b.classList.add(state[key]===0?'s-bad':state[key]===1?'s-mild':'s-good');
+    }
+  });
+  ['food','exercise','supplement'].forEach(k=>{
+    if(state[k])document.getElementById('chk-'+k).classList.add('checked');
+  });
+  if(state.aiText){
+    document.getElementById('ai-card').classList.add('show');
+    document.getElementById('ai-body').innerHTML='<div class="ai-text">'+state.aiText+'</div>';
+  }
+}
+
+function chooseDay(day){
+  if(!day)return;
+  if(daysBetween(day,today)>0){toast('不能记录未来日期');document.getElementById('selected-date-input').value=selectedDay;return;}
+  selectedDay=day;
+  renderSelectedDay();
+}
+
+function goToday(){
+  selectedDay=today;
+  renderSelectedDay();
 }
 
 function rate(btn){
@@ -291,22 +416,50 @@ function rate(btn){
   });
 }
 
-function toggleSleep(){
-  state.sleep=!state.sleep;
-  document.getElementById('sleep-toggle').classList.toggle('on',state.sleep);
-  const sub=document.getElementById('sleep-sub');
-  sub.textContent=state.sleep?'昨晚睡了整觉 ✓':'昨晚没睡整觉';
-  sub.style.color=state.sleep?'var(--green)':'';
-}
-
 function toggleCheck(key,btn){state[key]=!state[key];btn.classList.toggle('checked',state[key]);}
 
-async function saveToday(){
-  if(state.headache===null||state.back===null||state.eyes===null){toast('请先完成症状记录');return;}
-  const all=load();all[today]={...state,ts:Date.now()};save(all);
+function pct(done,total){return total?Math.round(done/total*100):0;}
+function scoreSymptoms(d){
+  if(!d)return 0;
+  const vals=[d.headache,d.back,d.eyes].filter(v=>v!==null&&v!==undefined);
+  return vals.reduce((sum,v)=>sum+(2-v),0);
+}
+function entryStatus(d){
+  if(!d)return '未记录';
+  const actionCount=['food','exercise','supplement'].filter(k=>d[k]).length;
+  const symptomCount=scoreSymptoms(d);
+  if(actionCount===3&&symptomCount===0&&sleepVal(d)===2)return '状态完整';
+  if(actionCount>=2)return '已完成重点行动';
+  return '已记录';
+}
+function chipSymHtml(v,good,mild,bad){
+  return v===0?`<span class="chip chip-bad">${bad}</span>`:v===1?`<span class="chip chip-mild">${mild}</span>`:v===2?`<span class="chip chip-good">${good}</span>`:`<span class="chip chip-off">未记</span>`;
+}
+function chipSleepHtml(d){
+  return sleepVal(d)===2?'<span class="chip chip-good">睡眠好</span>':sleepVal(d)===1?'<span class="chip chip-mild">睡眠一般</span>':sleepVal(d)===0?'<span class="chip chip-bad">睡眠差</span>':'<span class="chip chip-off">睡眠未记</span>';
+}
+function detailChips(d){
+  if(!d)return '<span class="chip chip-off">未记录</span>';
+  return `${chipSymHtml(d.headache,'头痛无','头痛轻','头痛明显')}
+    ${chipSymHtml(d.back,'腰痛无','腰痛轻','腰痛明显')}
+    ${chipSymHtml(d.eyes,'眼干无','眼干轻','眼干明显')}
+    ${chipSleepHtml(d)}
+    ${d.food?'<span class="chip chip-on">饮食✓</span>':''}
+    ${d.exercise?'<span class="chip chip-on">运动✓</span>':''}
+    ${d.supplement?'<span class="chip chip-on">补剂✓</span>':''}`;
+}
+
+async function saveEntry(){
+  if(state.headache===null||state.back===null||state.eyes===null||state.sleep===null){toast('请先完成四项健康记录');return;}
+  const all=load();all[selectedDay]={...state,ts:Date.now()};save(all);
   const btn=document.getElementById('save-btn');
   btn.textContent='已保存 ✓';btn.classList.add('done');btn.disabled=true;
-  setTimeout(()=>{btn.textContent='保存今天的记录';btn.classList.remove('done');btn.disabled=false;},2500);
+  setTimeout(()=>{
+    const diff=daysBetween(selectedDay,today);
+    btn.textContent=diff===0?'保存今天的记录':'保存这天的记录';
+    btn.classList.remove('done');
+    btn.disabled=false;
+  },1800);
   calcStreak();
   await runAI(all);
 }
@@ -323,7 +476,7 @@ async function runAI(all){
   const keys=Object.keys(all).sort();
   const recent=keys.slice(-30).map(k=>{
     const d=all[k];
-    return `${k}: 头痛${['有','轻微','无'][d.headache]||'?'} 腰痛${['有','轻微','无'][d.back]||'?'} 眼干${['有','轻微','无'][d.eyes]||'?'} 睡眠${d.sleep?'整觉':'未整觉'} 饮食${d.food?'✓':'✗'} 运动${d.exercise?'✓':'✗'} 补剂${d.supplement?'✓':'✗'}`;
+    return `${k}: 头痛${symptomText(d.headache)} 腰痛${symptomText(d.back)} 眼干${symptomText(d.eyes)} 睡眠${sleepText(d)} 饮食${d.food?'✓':'✗'} 运动${d.exercise?'✓':'✗'} 补剂${d.supplement?'✓':'✗'}`;
   }).join('\n');
 
   const prompt=`你是用户的健康朋友，帮她分析健康记录并找出规律。
@@ -333,7 +486,7 @@ async function runAI(all){
 ${recent}
 
 请做两件事：
-1. 找出最有意义的一个症状关联规律（比如睡眠与头痛的关系、运动与腰痛的关系、补剂与眼干的关系等），用数据支撑，比如"你头痛的那几天里，有X天前一晚没睡整觉"。
+1. 找出最有意义的一个症状关联规律（比如睡眠质量与头痛的关系、运动与腰痛的关系、补剂与眼干的关系等），用数据支撑。
 2. 基于整体趋势给一个具体可执行的建议。
 
 语气像朋友，口语化，不超过4句话，不要用医生口吻。`;
@@ -346,7 +499,9 @@ ${recent}
     });
     const data=await res.json();
     if(data.choices&&data.choices[0]){
-      body.innerHTML='<div class="ai-text">'+data.choices[0].message.content.trim()+'</div>';
+      const txt=data.choices[0].message.content.trim();
+      body.innerHTML='<div class="ai-text">'+txt+'</div>';
+      const stored=load();if(stored[selectedDay]){stored[selectedDay].aiText=txt;save(stored);state.aiText=txt;}
     }else{throw new Error(data.error?.message||'未知错误');}
   }catch(e){
     body.innerHTML='<div class="ai-text" style="opacity:.8">分析暂时不可用（'+e.message+'），数据已保存。</div>';
@@ -360,14 +515,48 @@ function renderTrends(){
 
   // Build last 30 days list
   const last30=[];
-  for(let i=29;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);last30.push(d.toISOString().slice(0,10));}
+  for(let i=29;i>=0;i--){last30.push(addDays(today,-i));}
+  const recorded30=last30.filter(k=>!!all[k]);
+  const last7=[];
+  for(let i=6;i>=0;i--){last7.push(addDays(today,-i));}
+  const recorded7=last7.filter(k=>!!all[k]);
+  const actions=[
+    {key:'food',name:'饮食'},
+    {key:'exercise',name:'运动'},
+    {key:'supplement',name:'补剂'}
+  ];
+  const actionRates=actions.map(a=>({
+    ...a,
+    done:recorded7.filter(k=>all[k][a.key]).length,
+    rate:pct(recorded7.filter(k=>all[k][a.key]).length,recorded7.length)
+  }));
+  const bestAction=actionRates.slice().sort((a,b)=>b.rate-a.rate)[0];
+  const weakAction=actionRates.slice().sort((a,b)=>a.rate-b.rate)[0];
+  const sleepDays=recorded7.filter(k=>sleepVal(all[k])===2).length;
+  const symptomDays=recorded7.filter(k=>scoreSymptoms(all[k])>0).length;
+  const missingDays=7-recorded7.length;
+  const actionTotal=actionRates.reduce((sum,a)=>sum+a.done,0);
+  const actionTarget=recorded7.length*actions.length;
+  const localSummary=!keys.length
+    ? '还没有足够记录。先连续记录 3 天，趋势页就能开始给你更具体的行动反馈。'
+    : `近7天记录了 ${recorded7.length}/7 天，行动完成 ${actionTotal}/${actionTarget||21} 项。${bestAction&&bestAction.done?`${bestAction.name}最稳定，完成 ${bestAction.done}/${recorded7.length} 天。`:''}${weakAction?`下一步优先补的是${weakAction.name}，先把它做到每周 4 天以上。`:''}${sleepDays<Math.max(3,recorded7.length/2)?' 睡眠质量偏不稳，可以把“睡眠好”作为本周最小目标。':' 睡眠质量不错，可以继续观察它和头痛、眼干的关系。'}${symptomDays>=3?' 症状出现偏频繁，本周建议少加任务，先稳睡眠和运动。':''}${missingDays>=3?' 记录天数还少，先降低标准，只要每天花30秒补齐。':''}`;
+  document.getElementById('performance-card').innerHTML=`
+    <div class="insight-title">这周怎么调整</div>
+    <div class="insight-text" id="trend-ai-text">${localSummary}</div>
+    <div class="insight-grid">
+      <div class="insight-cell"><div class="insight-num">${recorded7.length}/7</div><div class="insight-label">记录天数</div></div>
+      <div class="insight-cell"><div class="insight-num">${actionTotal}/${actionTarget||21}</div><div class="insight-label">行动完成</div></div>
+      <div class="insight-cell"><div class="insight-num">${sleepDays}</div><div class="insight-label">睡眠好</div></div>
+    </div>
+    <button class="ai-trend-btn" onclick="runTrendAI()">生成 AI 周报</button>
+    <div class="mini-note">AI 周报会读取近30天本机记录；没有 API Key 时会保留上面的本地总结。</div>`;
 
   // Symptom overview
   const symptoms=[
     {key:'headache',icon:'🧠',name:'头痛',isSleep:false},
     {key:'back',    icon:'🦴',name:'腰痛',isSleep:false},
     {key:'eyes',    icon:'👁️',name:'眼睛干涩',isSleep:false},
-    {key:'sleep',   icon:'🌙',name:'睡眠',isSleep:true},
+    {key:'sleep',   icon:'🌙',name:'睡眠质量',isSleep:true},
   ];
 
   let symHtml='';
@@ -378,29 +567,31 @@ function renderTrends(){
       const d=all[k];
       if(!d){cells+='<div class="hc hc-none"></div>';return;}
       if(s.isSleep){
-        cells+=d.sleep?'<div class="hc hc-good"></div>':'<div class="hc hc-bad"></div>';
+        const v=sleepVal(d);
+        cells+=v===2?'<div class="hc hc-good"></div>':v===1?'<div class="hc hc-mild"></div>':'<div class="hc hc-bad"></div>';
       }else{
         const v=d[s.key];
         cells+=v===2?'<div class="hc hc-good"></div>':v===1?'<div class="hc hc-mild"></div>':'<div class="hc hc-bad"></div>';
       }
     });
 
-    const recorded=last30.filter(k=>!!all[k]);
+    const recorded=recorded30;
     let statHtml='',trendHtml='';
 
     if(s.isSleep){
-      const goodCount=recorded.filter(k=>all[k].sleep).length;
+      const goodCount=recorded.filter(k=>sleepVal(all[k])===2).length;
       const pct=recorded.length?Math.round(goodCount/recorded.length*100):0;
       const last7=last30.slice(-7).filter(k=>all[k]);
-      const last7good=last7.filter(k=>all[k].sleep).length;
-      statHtml=`<div class="sym-stat">整觉率 <b>${pct}%</b></div><div class="sym-stat">近7天 <b>${last7good}/${last7.length}天</b></div>`;
+      const last7good=last7.filter(k=>sleepVal(all[k])===2).length;
+      const last7mid=last7.filter(k=>sleepVal(all[k])===1).length;
+      statHtml=`<div class="sym-stat">好睡眠 <b>${pct}%</b></div><div class="sym-stat">近7天 <b>${last7good}好/${last7mid}一般</b></div>`;
       const prev7=last30.slice(-14,-7).filter(k=>all[k]);
-      const prev7good=prev7.filter(k=>all[k].sleep).length;
+      const prev7good=prev7.filter(k=>sleepVal(all[k])===2).length;
       const prev7pct=prev7.length?prev7good/prev7.length:0;
       const curr7pct=last7.length?last7good/last7.length:0;
-      if(curr7pct>prev7pct+0.1)trendHtml='<div class="sym-trend trend-down">↑ 近一周睡眠改善</div>';
-      else if(curr7pct<prev7pct-0.1)trendHtml='<div class="sym-trend trend-up">↓ 近一周睡眠变差</div>';
-      else trendHtml='<div class="sym-trend trend-flat">→ 睡眠状态平稳</div>';
+      if(curr7pct>prev7pct+0.1)trendHtml='<div class="sym-trend trend-down">↑ 近一周睡眠质量改善</div>';
+      else if(curr7pct<prev7pct-0.1)trendHtml='<div class="sym-trend trend-up">↓ 近一周睡眠质量变差</div>';
+      else trendHtml='<div class="sym-trend trend-flat">→ 睡眠质量平稳</div>';
     }else{
       const badCount=recorded.filter(k=>all[k][s.key]===0).length;
       const mildCount=recorded.filter(k=>all[k][s.key]===1).length;
@@ -422,6 +613,7 @@ function renderTrends(){
       <div class="sym-body">
         <div class="sym-name">${s.name}</div>
         <div class="heat-row">${cells}</div>
+        <div class="heat-hint">左侧是今天，越往右越早</div>
         <div class="sym-meta">${statHtml}</div>
         ${trendHtml}
       </div>
@@ -429,56 +621,137 @@ function renderTrends(){
   });
   document.getElementById('sym-overview').innerHTML=symHtml||'<div style="padding:24px;text-align:center;color:var(--g400);font-size:14px">暂无数据</div>';
 
-  // Action rates
-  if(!keys.length){
-    document.getElementById('action-rates').innerHTML='<div style="padding:24px;text-align:center;color:var(--g400);font-size:14px">暂无数据</div>';
-  }else{
-    const r30=last30.filter(k=>!!all[k]).map(k=>all[k]);
-    const pct=fn=>r30.length?Math.round(r30.filter(fn).length/r30.length*100):0;
-    const fp=pct(d=>d.food),ep=pct(d=>d.exercise),sp=pct(d=>d.supplement);
-    const aRows=[['🥗','高蛋白饮食',fp],['🏃','运动',ep],['💊','补剂',sp]];
-    let aHtml='';
-    aRows.forEach(([icon,name,p])=>{
-      aHtml+=`<div class="action-row">
-        <span style="font-size:17px;flex-shrink:0">${icon}</span>
-        <span class="action-name">${name}</span>
-        <div class="bar-track"><div class="bar-fill" style="width:${p}%"></div></div>
-        <span class="action-pct">${p}%</span>
-      </div>`;
-    });
-    document.getElementById('action-rates').innerHTML=aHtml;
-  }
-
-  // History
-  const hkeys=keys.slice().reverse();
-  if(!hkeys.length){
-    document.getElementById('history-list').innerHTML='<div class="empty"><div class="empty-icon">📋</div><div class="empty-text">还没有记录<br>从今天开始吧</div></div>';
-    return;
-  }
-  const chipSym=(v,good,mild,bad)=>v===0?`<span class="chip chip-bad">${bad}</span>`:v===1?`<span class="chip chip-mild">${mild}</span>`:`<span class="chip chip-good">${good}</span>`;
+  // Recent history and search
   let hHtml='';
-  hkeys.slice(0,60).forEach(k=>{
+  hHtml+=`<div class="history-tools">
+    <input class="date-input" id="history-search-date" type="date" max="${today}" />
+    <button class="small-btn" onclick="searchHistoryDate()">搜索</button>
+  </div>
+  <div id="history-search-result"></div>`;
+  last7.slice().reverse().forEach(k=>{
     const d=all[k];
     hHtml+=`<div class="h-row">
       <div class="h-date-col"><div class="h-date">${fmt(k)}</div><div class="h-wd">周${wd(k)}</div></div>
-      <div class="h-chips">
-        ${chipSym(d.headache,'头痛无','头痛轻','头痛有')}
-        ${chipSym(d.back,'腰痛无','腰痛轻','腰痛有')}
-        ${chipSym(d.eyes,'眼干无','眼干轻','眼干有')}
-        ${d.sleep?'<span class="chip chip-on">整觉</span>':'<span class="chip chip-off">未整觉</span>'}
-        ${d.food?'<span class="chip chip-on">饮食✓</span>':''}
-        ${d.exercise?'<span class="chip chip-on">运动✓</span>':''}
-        ${d.supplement?'<span class="chip chip-on">补剂✓</span>':''}
-      </div>
+      <div class="h-chips">${detailChips(d)}</div>
+      <button class="h-edit" onclick="openDay('${k}')">${d?'编辑':'补记'}</button>
     </div>`;
   });
   document.getElementById('history-list').innerHTML=hHtml;
 }
 
+async function runTrendAI(){
+  const all=load();
+  const keys=Object.keys(all).sort();
+  const target=document.getElementById('trend-ai-text');
+  const btn=document.querySelector('.ai-trend-btn');
+  if(!keys.length){toast('还没有记录可分析');return;}
+  const apiKey=getKey();
+  if(!apiKey){toast('请先在设置里填写 API Key');return;}
+  btn.disabled=true;
+  btn.textContent='正在生成...';
+  target.textContent='正在结合近30天记录生成汇报...';
+  const recent=keys.slice(-30).map(k=>{
+    const d=all[k];
+    return `${k}: 头痛${symptomText(d.headache)} 腰痛${symptomText(d.back)} 眼干${symptomText(d.eyes)} 睡眠${sleepText(d)} 饮食${d.food?'完成':'未完成'} 运动${d.exercise?'完成':'未完成'} 补剂${d.supplement?'完成':'未完成'}`;
+  }).join('\n');
+  const prompt=`你是用户的健康行动教练。请基于近30天记录，输出一段短周报。
+
+记录：
+${recent}
+
+要求：
+1. 先总结近期打卡表现，不要只罗列百分比。
+2. 指出一个最该保持的行动和一个最该补上的行动。
+3. 如果症状和行动/睡眠有明显关系，点出来。
+4. 最后给本周一个很具体的小目标。
+语气像朋友，口语化，不超过5句话，不要医疗诊断。`;
+  try{
+    const res=await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body:JSON.stringify({model:'glm-4-flash',messages:[{role:'user',content:prompt}],max_tokens:280,temperature:0.65})
+    });
+    const data=await res.json();
+    if(data.choices&&data.choices[0]){
+      target.textContent=data.choices[0].message.content.trim();
+    }else{throw new Error(data.error?.message||'未知错误');}
+  }catch(e){
+    target.textContent='AI 周报暂时不可用，但本地摘要已经保留。错误：'+e.message;
+  }finally{
+    btn.disabled=false;
+    btn.textContent='重新生成 AI 周报';
+  }
+}
+
+function openDay(day){
+  selectedDay=day;
+  switchTab('log');
+  renderSelectedDay();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function searchHistoryDate(){
+  const input=document.getElementById('history-search-date');
+  const day=input.value;
+  if(!day){toast('请选择日期');return;}
+  const all=load();
+  const d=all[day];
+  document.getElementById('history-search-result').innerHTML=`<div class="h-row">
+    <div class="h-date-col"><div class="h-date">${fmt(day)}</div><div class="h-wd">周${wd(day)}</div></div>
+    <div class="h-chips">${detailChips(d)}</div>
+    <button class="h-edit" onclick="openDay('${day}')">${d?'编辑':'补记'}</button>
+  </div>`;
+}
+
+async function exportData(){
+  const payload={
+    app:'AI-health',
+    version:1,
+    exportedAt:new Date().toISOString(),
+    records:load()
+  };
+  const text=JSON.stringify(payload);
+  const box=document.getElementById('data-transfer');
+  box.value=text;
+  box.focus();
+  box.select();
+  try{
+    await navigator.clipboard.writeText(text);
+    toast('已导出并复制');
+  }catch(e){
+    toast('已导出，请手动复制');
+  }
+}
+
+function importData(){
+  const box=document.getElementById('data-transfer');
+  const raw=box.value.trim();
+  if(!raw){toast('请先粘贴数据');return;}
+  try{
+    const parsed=JSON.parse(raw);
+    const incoming=parsed.records||parsed;
+    if(!incoming||typeof incoming!=='object'||Array.isArray(incoming))throw new Error('格式不对');
+    const cleaned={};
+    Object.keys(incoming).forEach(k=>{
+      if(/^\d{4}-\d{2}-\d{2}$/.test(k)&&incoming[k]&&typeof incoming[k]==='object'){
+        cleaned[k]=normalizeEntry(incoming[k]);
+      }
+    });
+    if(!Object.keys(cleaned).length)throw new Error('没有可导入的记录');
+    const merged={...load(),...cleaned};
+    save(merged);
+    renderSelectedDay();
+    calcStreak();
+    toast('已导入 '+Object.keys(cleaned).length+' 天记录');
+  }catch(e){
+    toast('导入失败：请检查复制内容');
+  }
+}
+
 // ── Tab switch ──
 function switchTab(name){
-  const currentDay=new Date().toISOString().slice(0,10);
-  if(name==='log'&&currentDay!==today){window.location.reload();return;}
+  today=localDateKey(new Date());
+  refreshHeader();
   ['log','trends','settings'].forEach((t,i)=>{
     document.getElementById('tab-'+t).style.display=t===name?'':'none';
     document.querySelectorAll('.tab')[i].classList.toggle('active',t===name);
@@ -497,68 +770,18 @@ function saveApiKey(){
 
 function clearAll(){
   if(!confirm('确定要清除所有健康记录吗？此操作不可恢复。'))return;
-  localStorage.removeItem(SK);toast('已清除所有数据');calcStreak();
-}
-
-function init(){
-  const all=load();
-  if(all[today]){
-    const d=all[today];state={...d};
-    ['headache','back','eyes'].forEach(key=>{
-      if(d[key]!==null){
-        const b=document.querySelector(`.pill[data-key="${key}"][data-val="${d[key]}"]`);
-        if(b)b.classList.add(d[key]===0?'s-bad':d[key]===1?'s-mild':'s-good');
-      }
-    });
-    if(d.sleep){document.getElementById('sleep-toggle').classList.add('on');document.getElementById('sleep-sub').textContent='昨晚睡了整觉 ✓';document.getElementById('sleep-sub').style.color='var(--green)';}
-    ['food','exercise','supplement'].forEach(k=>{if(d[k])document.getElementById('chk-'+k).classList.add('checked');});
-    // show cached AI result if saved today
-    if(d.aiText){const card=document.getElementById('ai-card');card.classList.add('show');document.getElementById('ai-body').innerHTML='<div class="ai-text">'+d.aiText+'</div>';}
-  }
+  localStorage.removeItem(SK);
+  state=emptyState();
+  renderSelectedDay();
+  renderTrends();
+  toast('已清除所有数据');
   calcStreak();
 }
 
-// override saveToday to also cache AI text
-const _origRunAI=runAI;
-async function runAI(all){
-  const card=document.getElementById('ai-card');
-  const body=document.getElementById('ai-body');
-  card.classList.add('show');
-  body.innerHTML='<div class="ai-loading"><div class="ai-spinner"></div><div class="ai-loading-text">正在分析健康趋势与关联…</div></div>';
-  const apiKey=getKey();
-  if(!apiKey){body.innerHTML='<div class="ai-text">请先在「设置」页面填入 API Key，才能启用 AI 分析。</div>';return;}
-  const keys=Object.keys(all).sort();
-  const recent=keys.slice(-30).map(k=>{
-    const d=all[k];
-    return `${k}: 头痛${['有','轻微','无'][d.headache]||'?'} 腰痛${['有','轻微','无'][d.back]||'?'} 眼干${['有','轻微','无'][d.eyes]||'?'} 睡眠${d.sleep?'整觉':'未整觉'} 饮食${d.food?'✓':'✗'} 运动${d.exercise?'✓':'✗'} 补剂${d.supplement?'✓':'✗'}`;
-  }).join('\n');
-  const prompt=`你是用户的健康朋友，帮她分析健康记录并找出规律。
-用户：44岁女性，腰椎轻度退变（L3/4、L4/5椎间盘膨出），做抗衰老管理。
-
-近30天记录：
-${recent}
-
-请做两件事：
-1. 找出最有意义的一个症状关联规律（比如睡眠与头痛的关系、运动与腰痛的关系、补剂与眼干的关系等），用数据支撑，比如"你头痛的那几天里，有X天前一晚没睡整觉"。
-2. 基于整体趋势给一个具体可执行的建议。
-
-语气像朋友，口语化，不超过4句话，不要用医生口吻。`;
-  try{
-    const res=await fetch('https://open.bigmodel.cn/api/paas/v4/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
-      body:JSON.stringify({model:'glm-4-flash',messages:[{role:'user',content:prompt}],max_tokens:250,temperature:0.7})
-    });
-    const data=await res.json();
-    if(data.choices&&data.choices[0]){
-      const txt=data.choices[0].message.content.trim();
-      body.innerHTML='<div class="ai-text">'+txt+'</div>';
-      // cache in today's record
-      const stored=load();if(stored[today]){stored[today].aiText=txt;save(stored);}
-    }else{throw new Error(data.error?.message||'未知错误');}
-  }catch(e){
-    body.innerHTML='<div class="ai-text" style="opacity:.8">分析暂时不可用（'+e.message+'），数据已保存。</div>';
-  }
+function init(){
+  refreshHeader();
+  renderSelectedDay();
+  calcStreak();
 }
 
 init();
