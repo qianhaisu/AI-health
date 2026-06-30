@@ -10,18 +10,15 @@ module.exports = async function handler(req, res) {
     const token = auth.replace(/^Bearer\s+/i, '').trim();
     if (!token || token !== secret) return send(res, 401, { error: '云同步口令不正确' });
 
-    const { list, put } = await import('@vercel/blob');
+    const { get, put } = await import('@vercel/blob');
     const key = 'ai-health/records.json';
 
     if (req.method === 'GET') {
-      const result = await list({ prefix: key, limit: 1 });
-      const blob = (result.blobs || []).find(item => item.pathname === key);
-      if (!blob) {
+      const result = await get(key, { access: 'private' });
+      if (!result || result.statusCode !== 200 || !result.stream) {
         return send(res, 200, { records: {}, updatedAt: null });
       }
-      const response = await fetch(blob.url, { cache: 'no-store' });
-      if (!response.ok) return send(res, 200, { records: {}, updatedAt: null });
-      const text = await response.text();
+      const text = await new Response(result.stream).text();
       return send(res, 200, JSON.parse(text));
     }
 
@@ -30,7 +27,7 @@ module.exports = async function handler(req, res) {
       const records = sanitizeRecords(body.records || {});
       const payload = { records, updatedAt: new Date().toISOString() };
       await put(key, JSON.stringify(payload), {
-        access: 'public',
+        access: 'private',
         allowOverwrite: true,
         contentType: 'application/json'
       });
