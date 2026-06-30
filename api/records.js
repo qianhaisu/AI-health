@@ -2,6 +2,9 @@ module.exports = async function handler(req, res) {
   try {
     const secret = process.env.HEALTH_SYNC_SECRET;
     if (!secret) return send(res, 500, { error: '云同步口令还没有在 Vercel 环境变量中设置' });
+    if (!process.env.BLOB_READ_WRITE_TOKEN && !process.env.BLOB_STORE_ID) {
+      return send(res, 500, { error: 'Vercel Blob 还没有连接到项目，请连接 Blob 后重新部署' });
+    }
 
     const auth = req.headers.authorization || '';
     const token = auth.replace(/^Bearer\s+/i, '').trim();
@@ -27,7 +30,7 @@ module.exports = async function handler(req, res) {
       const records = sanitizeRecords(body.records || {});
       const payload = { records, updatedAt: new Date().toISOString() };
       await put(key, JSON.stringify(payload), {
-        access: 'public',
+        access: 'private',
         allowOverwrite: true,
         contentType: 'application/json'
       });
