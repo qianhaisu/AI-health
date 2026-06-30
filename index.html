@@ -288,6 +288,22 @@ body { font-family: -apple-system,'PingFang SC','SF Pro Text',sans-serif; backgr
     <div class="settings-card">
       <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:10px">
         <div>
+          <div style="font-size:15px;font-weight:500">云端同步</div>
+          <div style="font-size:12px;color:var(--g400);margin-top:2px">部署到 Netlify 后可把记录保存到网上，换设备用同一个口令同步</div>
+        </div>
+        <div style="display:flex;gap:8px;width:100%">
+          <input class="api-input" id="cloud-token-input" type="password" placeholder="输入你的云同步口令" />
+          <button class="save-api-btn" onclick="saveCloudToken()">保存</button>
+        </div>
+        <div class="data-actions">
+          <button class="small-btn" onclick="syncCloud('pull')">下载云端</button>
+          <button class="small-btn" onclick="syncCloud('push')">上传本地</button>
+        </div>
+        <button class="small-btn" style="width:100%" onclick="syncCloud('merge')">合并同步</button>
+        <div style="font-size:12px;color:var(--g400)" id="cloud-sync-status">未同步</div>
+      </div>
+      <div class="setting-row" style="flex-direction:column;align-items:flex-start;gap:10px">
+        <div>
           <div style="font-size:15px;font-weight:500">复制 / 粘贴迁移数据</div>
           <div style="font-size:12px;color:var(--g400);margin-top:2px">换设备时，先导出复制，到新设备粘贴导入</div>
         </div>
@@ -311,7 +327,7 @@ body { font-family: -apple-system,'PingFang SC','SF Pro Text',sans-serif; backgr
 <div class="toast" id="toast"></div>
 
 <script>
-const SK='hj_v4', AK='hj_apikey';
+const SK='hj_v4', AK='hj_apikey', CK='hj_cloud_token';
 const emptyState=()=>({headache:null,back:null,eyes:null,sleep:null,food:false,exercise:false,supplement:false});
 let today=localDateKey(new Date());
 let selectedDay=today;
@@ -330,6 +346,7 @@ function wd(d){return['日','一','二','三','四','五','六'][dateFromKey(d).
 function load(){try{return JSON.parse(localStorage.getItem(SK)||'{}');}catch(e){return{};}}
 function save(data){localStorage.setItem(SK,JSON.stringify(data));}
 function getKey(){return localStorage.getItem(AK)||'';}
+function getCloudToken(){return localStorage.getItem(CK)||'';}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2200);}
 function sleepVal(d){
   if(!d)return null;
@@ -461,6 +478,7 @@ async function saveEntry(){
     btn.disabled=false;
   },1800);
   calcStreak();
+  syncCloud('push',{quiet:true});
   await runAI(all);
 }
 
@@ -748,6 +766,86 @@ function importData(){
   }
 }
 
+function saveCloudToken(){
+  const val=document.getElementById('cloud-token-input').value.trim();
+  if(!val){toast('同步口令不能为空');return;}
+  localStorage.setItem(CK,val);
+  document.getElementById('cloud-token-input').value='';
+  document.getElementById('cloud-sync-status').textContent='口令已保存';
+  toast('云同步口令已保存');
+}
+
+function cleanRecords(records){
+  const cleaned={};
+  Object.keys(records||{}).forEach(k=>{
+    if(/^\d{4}-\d{2}-\d{2}$/.test(k)&&records[k]&&typeof records[k]==='object'){
+      cleaned[k]=normalizeEntry(records[k]);
+    }
+  });
+  return cleaned;
+}
+
+function mergeRecords(localRecords, remoteRecords){
+  const merged={...cleanRecords(remoteRecords),...cleanRecords(localRecords)};
+  Object.keys(remoteRecords||{}).forEach(k=>{
+    if(merged[k]&&remoteRecords[k]&&localRecords[k]){
+      const remoteTs=remoteRecords[k].ts||0;
+      const localTs=localRecords[k].ts||0;
+      merged[k]=normalizeEntry(localTs>=remoteTs?localRecords[k]:remoteRecords[k]);
+    }
+  });
+  return merged;
+}
+
+async function cloudRequest(method, body){
+  const token=getCloudToken();
+  if(!token)throw new Error('请先保存云同步口令');
+  const res=await fetch('/api/records',{
+    method,
+    headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},
+    body:body?JSON.stringify(body):undefined
+  });
+  const data=await res.json().catch(()=>({}));
+  if(!res.ok)throw new Error(data.error||'云同步失败');
+  return data;
+}
+
+async function syncCloud(mode, opts={}){
+  const status=document.getElementById('cloud-sync-status');
+  const quiet=!!opts.quiet;
+  if(!getCloudToken()){if(!quiet)toast('请先保存云同步口令');return;}
+  try{
+    if(status)status.textContent='正在同步...';
+    const local=load();
+    if(mode==='push'){
+      await cloudRequest('PUT',{records:cleanRecords(local)});
+      if(status)status.textContent='已上传本地记录';
+      if(!quiet)toast('已上传到云端');
+      return;
+    }
+    const remoteData=await cloudRequest('GET');
+    const remote=cleanRecords(remoteData.records||{});
+    if(mode==='pull'){
+      save(remote);
+      renderSelectedDay();
+      calcStreak();
+      if(status)status.textContent='已下载云端记录';
+      toast('已从云端下载');
+      return;
+    }
+    const merged=mergeRecords(local,remote);
+    save(merged);
+    await cloudRequest('PUT',{records:merged});
+    renderSelectedDay();
+    calcStreak();
+    if(status)status.textContent='已合并同步';
+    toast('已合并同步');
+  }catch(e){
+    if(status)status.textContent='同步失败：'+e.message;
+    if(!quiet)toast('同步失败：'+e.message);
+  }
+}
+
 // ── Tab switch ──
 function switchTab(name){
   today=localDateKey(new Date());
@@ -757,7 +855,10 @@ function switchTab(name){
     document.querySelectorAll('.tab')[i].classList.toggle('active',t===name);
   });
   if(name==='trends')renderTrends();
-  if(name==='settings'){const k=getKey();if(k)document.getElementById('api-key-input').placeholder='已设置（重新粘贴可更新）';}
+  if(name==='settings'){
+    const k=getKey();if(k)document.getElementById('api-key-input').placeholder='已设置（重新粘贴可更新）';
+    const c=getCloudToken();if(c)document.getElementById('cloud-token-input').placeholder='已设置（重新输入可更新）';
+  }
 }
 
 function saveApiKey(){
