@@ -30,7 +30,7 @@ module.exports = async function handler(req, res) {
       const records = sanitizeRecords(body.records || {});
       const payload = { records, updatedAt: new Date().toISOString() };
       await put(key, JSON.stringify(payload), {
-        access: 'private',
+        access: 'public',
         allowOverwrite: true,
         contentType: 'application/json'
       });
